@@ -1,0 +1,18 @@
+리터럴 literal
+피연산자 operand
+단항  unary
+이항 binary
+삼항 ternary
+
+
+int x = 2
+여기서 x는 변수, 2는 리터럴
+
+cout << ""Hello World" << endl;
+문자열도 리터럴
+
+cout << 1+2 << endl;
+여기서 1도 리터럴 2도 리터럴
+
+조건 연산자는 C++의 유일한 삼항  연산자
+int y = (x > 0) ? 1 : 2;
