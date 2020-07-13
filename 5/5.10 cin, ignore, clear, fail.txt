@@ -1,0 +1,140 @@
+cin에 의도치않은 입력이 들어왔을 때
+(사용자가 우리 입력을 의도치 않게 사용했을 때)
+
+```
+#include <iostream>
+
+using namespace std;
+
+int getInt()
+{
+	cout << "Enter an integer number : ";
+	int x;
+	cin >> x;
+
+	return x;
+}
+
+char getOperator()
+{
+	cout << "Enter an operator (+, -) : "; // ToDo : more opeators *, / etc.
+	char op;
+	cin >> op;
+	return op;
+}
+
+void printResult(int x, char op, int y)
+{
+	if (op == '+') cout << x + y << endl;
+	else if (op == '-') cout << x - y << endl;
+	else
+	{
+		cout << "Invalild operator" << endl;
+	}
+}
+
+int main()
+{	
+	int x = getInt();
+	char op = getOperator();
+	int y = getInt();
+
+	printResult(x, op, y);
+
+	return 0;
+}
+```
+
+여기서 프로그래머는 우선 숫자를 하나만 입력하고, 
+operaot를 입력하고
+그 다음 다음 숫자를 입력하길 바라지만
+
+사용자는 의도치 않게
+두 개의 숫자를 입력할 수 있다.
+
+이 경우 문제가 생긴다.
+
+이런 문제를 방지하기 위해, 
+두 개의 입력에서 나중에 입력된 수는 어차피 버퍼에 들어가니까
+두번째 입력부터는 `std::cin.ignore(32767, '\n');` 버퍼를 비우는 과정이 필요할 것이다.
+
+```
+int getInt()
+{
+	cout << "Enter an integer number : ";
+	int x;
+	cin >> x;
+	// 두번째 입력부터는 버퍼를 비운다
+	std::cin.ignore(32767, '\n');
+
+	return x;
+}
+
+char getOperator()
+{
+	cout << "Enter an operator (+, -) : "; // ToDo : more opeators *, / etc.
+	char op;
+	cin >> op;
+	// 두번째 입력부터는 버퍼를 비운다
+	std::cin.ignore(32767, '\n');
+	return op;
+}
+
+```
+
+getOperator부분도 "사용자가 올바른 값을 입력할 때까지 계속 입력을 받는" 식으로
+작성하는게 옳다
+
+```
+char getOperator()
+{
+	while (true)
+	{
+		cout << "Enter an operator (+, -) : "; // ToDo : more opeators *, / etc.
+		char op;
+		cin >> op;
+		// 두번째 입력부터는 버퍼를 비운다
+		std::cin.ignore(32767, '\n');
+
+		if (op == '+' || op == '-')
+			return op;
+		else
+			cout << "Invalid operator, please try again" << endl;
+	}
+
+}
+```
+
+입력받는 숫자가 너무 클 경우에도 난리(오버플로우)가 난다
+이 경우 입력값이 실패했는지 여부를 std::cin.fail()로 검사해서 결과를 boolean으로 받아
+잘못된 경우 std::cin.clear()로 지우고 버퍼를 비워야 한다
+
+
+```
+int getInt()
+{
+	while(true){
+		cout << "Enter an integer number : ";
+		int x;
+		cin >> x;
+
+		if (std::cin.fail())
+		{
+			std::cin.clear();
+			std::cin.ignore(32767, '\n');
+			cout << "Invalid number, please try again" << endl;
+		}
+		else
+		{
+			std::cin.ignore(32767, '\n');
+			return x;
+		}
+
+		// 두번째 입력부터는 버퍼를 비운다
+		std::cin.ignore(32767, '\n');
+
+		return x;
+	}
+}
+```
+

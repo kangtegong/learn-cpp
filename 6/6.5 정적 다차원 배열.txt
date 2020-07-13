@@ -1,0 +1,88 @@
+간단한 행렬 출력 프로그램
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	const int num_rows = 3;
+	const int num_columns = 3;
+
+	for (int row = 0; row < num_rows; ++row)
+	{
+		for (int col = 0; col < num_columns; ++col)
+			cout << '[' << row << ']' << '[' << col << ']' << '\t';
+		cout << endl;
+	}
+
+	return 0;
+}
+```
+
+```
+[0][0]  [0][1]  [0][2]
+[1][0]  [1][1]  [1][2]
+[2][0]  [2][1]  [2][2]
+```
+
+```
+	// 다차원 배열 선언, 초기화하기
+	// int array[num_rows][num_columns] =
+	// num_rows는 생략 가능
+	int array[num_rows][num_columns] // copy initialization도 가능
+	{
+		// 여기서 안채워넣는게 있다면 그 수만큼 0으로 채운다.
+		{1,2,3,4,5},		// row 0
+		{6,7,8,9,10},		// row 1
+		{11,12,13,14,15}	// row 2
+	};
+
+	for (int row = 0; row < num_rows; ++row)
+	{
+		for (int col = 0; col < num_columns; ++col)
+			//	cout << '[' << row << ']' << '[' << col << ']' << '\t';
+			// cout << array[row][col] << '\t';
+			cout << (int)&array[row][col] << '\t';
+ 		cout << endl;
+	}
+
+```
+
+여기서 중요한 포인트가 주소값이다. 각 요소의 주소값을 print 하고 10진수로 casting해보자
+
+```
+	int array[num_rows][num_columns] // copy initialization도 가능
+	{
+		{1,2,3,4,5},		// row 0
+		{6,7,8,9,10},		// row 1
+		{11,12,13,14,15}	// row 2
+	};
+
+	for (int row = 0; row < num_rows; ++row)
+	{
+		for (int col = 0; col < num_columns; ++col)
+			//	cout << '[' << row << ']' << '[' << col << ']' << '\t';
+			// cout << array[row][col] << '\t';
+			cout << (int)&array[row][col] << '\t';
+ 		cout << endl;
+	}
+```
+
+```
+19921988        19921992        19921996        19922000        19922004
+19922008        19922012        19922016        19922020        19922024
+19922028        19922032        19922036        19922040        19922044
+```
+
+그럼 행과 열에 관계없이 4바이트씩 차례대로 증가한다는 사실을 알 수 있다.
+실제로 메모리는 일차원이라는 걸 알 수 있다.
+나중에 이런 개념을 동적 메모리 할당에서 유용하게 쓰일 예정
+
+```
+// 아예 그냥 다 0으로 초기화시키고 싶은 경우
+
+int arry[num_rows][num_columns] = { 0 };
+
+```

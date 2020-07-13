@@ -1,0 +1,64 @@
+조금 더 빠른 inline함수로 최적화하기
+
+```
+#include <iostream>
+
+using namespace std;
+
+int min(int x, int y)
+{
+	// x와 y 중 작은 값을 리턴하는 함수
+	// 때로는 밑에 있는 한 줄의 코드를 실행하는 시간보다
+	// min이라는 함수를 찾고 등등 빌드업하는 시간이 더 클 때도 있다.
+	// 그럴 때 쓸 수 있는게 inline함수
+	return x > y ? y : x;
+}
+
+int main()
+{
+	cout << min(5, 6) << endl;
+	cout << min(3, 2) << endl;
+}
+
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int min(int x, int y)
+{
+	// x와 y 중 작은 값을 리턴하는 함수
+	// 때로는 밑에 있는 한 줄의 코드를 실행하는 시간보다
+	// min이라는 함수를 찾고 실행하는 시간이 더 클 때도 있다.
+	// 그럴 때 쓸 수 있는게 inline함수
+	return x > y ? y : x;
+}
+
+inline int inline_min(int x, int y)
+{
+	return x > y ? y : x;
+}
+
+int main()
+{
+	cout << min(5, 6) << endl;
+	cout << min(3, 2) << endl;
+
+	// inline 함수를  실행하면 마치 아래의 코드르 실행하는 것 처럼 된다
+	// 컴파일러가 inline함수를 아래처럼 변환시켜줌
+	cout << (5 > 6 ? 6 : 5) << endl;
+	cout << (3 > 2 ? 2 : 3) << endl;
+	// 여기서 중요한 건 inline함수를 위처럼 변환시켜줄지 말지 판단하는 건 컴파일러의 몫
+	// 컴파일러가 위처럼 변환시켜주지 않을 때도 있다
+	// 즉, 모든 함수를 인라인으로 변환시킨다고 해서 빨라지지 않는다는 거
+}
+
+
+```
+
+Plus, 요즘 컴파일러들은 똑똑해서 굳이 inline키워드 안써도 알아서 빨리 함
+
+즉, inline으로 최적화하는 건 그렇게 권장하지는 않늗다

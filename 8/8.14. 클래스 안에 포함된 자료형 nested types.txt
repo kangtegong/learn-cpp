@@ -1,0 +1,119 @@
+특정 기능을 담당하는 자료형을 구현해서 사용해야 하는 경우도 있음
+이 때, 자료형이 다른 곳 여기저기에 사용될 필요 없고
+클래스 안에만 자료형을 선언할 수도 있다.
+
+클래스 안에 포함된 자료형을 nested types라고 한다
+
+```
+#include <iostream>
+using namespace std;
+
+// Fruit 클래스 안에서만 사용될 확률이 높은 FruitType
+enum FruitType
+{
+	APPLE, BANANA, CHERRY,
+};
+
+class Fruit
+{
+private:
+	FruitType m_type;
+
+public:
+	Fruit(FruitType type) : m_type(type)
+	{}
+
+	FruitType getType() { return m_type; }
+};
+
+int main()
+{
+	Fruit apple(APPLE);
+
+	if (apple.getType == APPLE)
+	{
+		std::cout << "Apple" << std::endl;
+	}
+
+	return 0;
+}
+```
+
+
+```
+#include <iostream>
+using namespace std;
+
+class Fruit
+{
+public:
+	
+	// 그럼 enum을 Fruit 클래스 안에 넣어줄 수 있다
+	enum FruitType
+	{
+		APPLE, BANANA, CHERRY,
+	};
+
+	FruitType m_type;
+
+public:
+	Fruit(FruitType type) : m_type(type)
+	{}
+
+	FruitType getType() { return m_type; }
+};
+
+int main()
+{
+	// 그럼 여기서도 Fruit 클래스 안의 APPLE임을 명시해주어야 한다
+	Fruit apple(Fruit::APPLE);
+
+	if (apple.getType == Fruit::APPLE)
+	{
+		std::cout << "Apple" << std::endl;
+	}
+
+	return 0;
+}
+```
+
+
+enum이 아니라 enum class인 경우?
+
+
+```
+#include <iostream>
+using namespace std;
+
+class Fruit
+{
+public:	
+	enum class FruitType
+	{
+		APPLE, BANANA, CHERRY,
+	};
+
+	FruitType m_type;
+
+public:
+	Fruit(FruitType type) : m_type(type)
+	{}
+
+	FruitType getType() { return m_type; }
+};
+
+int main()
+{
+	Fruit apple(Fruit::FruitType::APPLE);
+
+	if (apple.getType == Fruit::FruitType::APPLE)
+	{
+		std::cout << "Apple" << std::endl;
+	}
+
+	return 0;
+}
+```
+
+enum 이외에도 inner class, struct 도 클래스 안에서의 내부적으로 정의되는 자료형을 선언하는 것이 가능하다
+

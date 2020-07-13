@@ -1,0 +1,135 @@
+지역변수는 '스택' 메모리를 사용하고 
+동적할당 메모리는 '힙' 메모리를 사용한다.
+
+큰 메모리에 저장되어있는 데이터 중 일부분을 CPU가 사용하기 위해 메모리로부터 가져올 때는
+메모리 전체를 모두 뒤지면서 찾는 것이 아니라
+필요한 데이터가 저장되어 있는  '주소'를 사용하여 직접 접근하여 가져온다
+
+메모리 주소를 담는 변수를 포인터라고 함
+
+
+// de-referrence operator (*) 
+
+c++에서는 포인터와 레퍼런스가 구분되어 있다.
+용어 혼동 주의
+
+de-reference는, 포인터가 "저 쪽 주소에 가면 이 데이터가 있어요~" 라고 간접적으로 가리키기만 하는 것에 대해서, 
+"그럼 거기에 진짜 뭐가 있는지 내가 들여다볼께" 하고 직접 접근하겠다는 의미.
+
+
+```
+int x = 5;
+cout << x << endl;		// 5 
+cout << *(&x) << endl;	// 5
+```
+
+포인터는 결국엔 변수에 불과하다. 메모리 주소를 저장하는 변수.
+
+포인터도 데이터 타입은 가지고 있다. typedef int * pint; 로 사용도 가능하다.
+
+```
+int * ptr_x = &x;
+```
+
+여러 개의 포인터 선언 시 주의할 점
+
+아래와 같이 작성하면 ptr_y는 포인터 변수로서 제대로 인식이 안된다.
+
+```
+int *ptr_x = &x. ptr_y = &y;
+```
+
+아래와 같이 *을 붙여줘야 포인터 변수로서 인식이 된다. (그래서 변수명 앞에 * 붙이길 권장)
+
+```
+int *ptr_x = &x. *ptr_y = &y;
+```
+
+```
+#include <iostream>
+#include <typeinfo>
+
+using namespace std;
+
+int main()
+{
+	int x = 5;
+	double d = 123.0;
+	int *ptr_x = &x;
+
+	cout << typeid(ptr_x).name() << endl;	// int *
+
+}
+```
+
+포인터 자체의 사이즈는 모드 같아도 
+포인터 타입이 있는 이유 : 디레퍼런싱을 해야 하기 때문
+
+
+포인터 변수의 크기는 달라도 주소는 사이즈가 모두 같다.
+
+```
+#include <iostream>
+#include <typeinfo>
+
+using namespace std;
+
+int main()
+{
+	// x86 기준
+	int x = 5;
+	double d = 123.0;
+	
+	int *ptr_x;
+	double *ptr_d;
+
+	cout << sizeof(x) << endl;
+	cout << sizeof(d) << endl;
+	cout << sizeof(&x) << " " << sizeof(ptr_x) << endl;
+	cout << sizeof(&d) << " " << sizeof(ptr_d) << endl;
+
+	/*
+	4
+	8
+	4 4
+	4 4
+	*/
+
+}
+```
+
+그리고 x86보다 x64에서의 주소가 더 길기 때문에 주소의 크기도 더 크다.
+
+
+구조체와 포인터
+
+> 잉? 이 부분에서 16, 4 가 나와야 되는데 왜 16, 16이 나오지
+
+```
+#include <iostream>
+#include <typeinfo>
+
+using namespace std;
+
+struct Something
+{
+	int a, b, c, d;		// 4 * 4 = 16
+};
+
+int main()
+{
+	Something ss;
+	Something * ptr_s;
+
+	cout << sizeof(ss) << endl;
+	cout << sizeof(*ptr_s) << endl;
+
+}
+```
+
+마지막으로 주의할 점
+
+초기화하지 않은 포인터를 de-reference하게 되면 warning이 뜬다.
+쓰레기값을 참조하기 때문. 
+
+이 오류가 가장 흔히 발생하는 오류 중 하나이다.

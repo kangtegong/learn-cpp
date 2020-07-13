@@ -1,0 +1,413 @@
+이번 강의 너무 어려움..진짜 중요한 거 같은데..
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	static int s_value;
+
+public:
+	int getValue()
+	{
+		return s_value;
+	}
+
+};
+
+int main()
+{
+	// sth1 정의되기 전에도 쓸 수 있다
+	cout << Something::s_value << endl;
+
+	Something sth1;
+	cout << sth1.getValue() << endl;
+
+
+	return 0;
+
+}
+
+```
+
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+	// 이번에는 이걸 private으로 바꿔보자
+private:
+	static int s_value;
+	int m_value;
+
+public:
+	static int getValue()
+	{
+	
+		return s_value;
+	}
+
+	int temp()
+	{
+		return this->s_value;;
+	}
+
+};
+
+// 초기화
+int Something::s_value = 1024;
+
+int main()
+{
+	cout << Something::getValue() << endl;
+
+	Something sth1, sth2;
+	cout << sth1.getValue() << endl;
+
+	// fptr1 이라는 함수 포인터에 멤버 함수를 갖고와보자
+	// int (Something::fptr1)() = &(s1.temp);
+	// 그런데 이렇게 해도 s1의 temp의 주소가 잘 담기지 않는다
+	// 이 이유는 멤버 변수와 멤버 함수의 근본적인 차이 때문인데,
+
+	// Something sth1, sth2로 두 개의 인스턴스를 만들었다고 가정했을 때 
+	// s1의 멤버변수(e.g. m_value)의 주소와 s2의 멤버변수 주소는 다르다
+	// 근데 멤버함수는 s1의 멤버함수와 s2의 멤버함수가 서로 같다.
+
+	// 가령 temp()는 메모리 어느 한 공간에 있고,
+	// s1이 temp()를 사용하고자 할 때는 temp에게 s1의 this포인터를 주고
+	// 이 this포인터 (=s1)의 멤버변수를 이용해서 temp를 실행해! 하는 식으로 실행된다
+
+	// 멤버함수 포인터를 쓰기 위해서는 아래와 같이 써야한다
+
+
+
+	int (Something::*fptr1)() = &Something::temp;
+
+	// sth2를 빼면 동작을 안한다
+	// 그 이유는 fptr1에게 sth2의 this 포인터를 넘겨준 뒤 
+	// 그 this 포인터 상에서 실행해야하기 때문
+	cout << (sth2.*fptr1)() << endl;		// sth2의 temp가 잘 실행된다.
+
+	return 0;
+
+}
+
+```
+
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+private:
+	static int s_value;
+	int m_value;
+
+public:
+	static int getValue()
+	{
+	
+		return s_value;
+	}
+
+	int temp()
+	{
+		return this->s_value;;
+	}
+
+};
+
+// 초기화
+int Something::s_value = 1024;
+
+int main()
+{
+	cout << Something::getValue() << endl;
+
+	Something sth1, sth2;
+	cout << sth1.getValue() << endl;
+
+	int (Something::*fptr1)() = &Something::temp;
+	cout << (sth2.*fptr1)() << endl;		
+
+	// 그럼 이번에는 static member function(getValue)을 갖고와보자
+	// int (Something::*fptr2)() = &Something::getValue;
+	// 재미있는건 이렇게 쓰면 에러가 난다.
+	// static member function을 함수포인터로 갖고 오기 위해서는 
+	// Something:: 을 빼줘야 한다
+	int (*fptr2)() = &Something::getValue;
+
+	// getValue는 static이라 Something class에 들어있긴 하지만
+	// getValue는 특정 인스턴스에 관련없이 갖고 올 수 있는 아래의 경우와 마찬가지
+	cout << Something::getValue() << endl;
+
+	// static member function은 특정 인스턴스와 관련없이 실행시킬 수 있는 function pointer로 받을 수 있다.
+	cout << fptr2() << endl;	// 이렇게도 실행이 된다
+
+	return 0;
+
+}
+
+```
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+	// 이번에는 이걸 private으로 바꿔보자
+private:
+	static int s_value;
+
+public:
+	int getValue()
+	{
+		return s_value;
+	}
+
+};
+
+int main()
+{
+	// 그러면 Something::s_value로는 접근이 안된다.
+	// cout << Something::s_value << endl;
+
+	Something sth1;
+	cout << sth1.getValue() << endl;
+
+
+	return 0;
+
+}
+
+```
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+	// 이번에는 이걸 private으로 바꿔보자
+private:
+	static int s_value;
+
+public:
+	static int getValue()
+	{
+		return s_value;
+	}
+
+};
+
+// 초기화
+int Something::s_value = 1024;
+
+int main()
+{
+	// 하지만 만약 정적멤버함수를 static int로 선언하면  
+	// 인스턴스와 상관없이 멤버함수로 private에 접근이 가능하다
+	cout << Something::getValue() << endl;
+
+	Something sth1;
+	cout << sth1.getValue() << endl;
+
+
+	return 0;
+
+}
+
+```
+
+static 멤버함수를 사용할 때 주의할 점
+static 멤버함수는 this 포인터를 사용할 수 없다!
+단순히 this 포인터라는 문법 자체를 못쓴다는게 아니라
+this로 접근 할 수 있는 모든 것을 할 수 없다는 뜻
+
+
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+	// 이번에는 이걸 private으로 바꿔보자
+private:
+	static int s_value;
+	int m_value;
+
+public:
+	static int getValue()
+	{
+		// return this->s_valule	// 에러
+		// return m_value;			// 얘도 에러
+		
+		// s_value는 정적으로 메모리에 존재하기 때문에 접근이 가능했던 거고
+		// m_value에 접근하기 위해서는 this 포인터가 필요하기 때문
+
+
+		return s_value;
+	}
+
+	int temp()
+	{
+		return this->s_value + this->m_value;
+	}
+
+};
+
+// 초기화
+int Something::s_value = 1024;
+
+int main()
+{
+	// 하지만 만약 정적멤버함수를 static int로 선언하면  
+	// 인스턴스와 상관없이 멤버함수로 private에 접근이 가능하다
+	cout << Something::getValue() << endl;
+
+	Something sth1;
+	cout << sth1.getValue() << endl;
+
+
+	return 0;
+
+}
+```
+
+이해를 돕기 위한 부연설명 
+
+함수 포인터를 이용하면 getValue나 tmp 함수 (멤버함수)의 포인터를 갖고 올 수 있다.
+
+
+
+여기서 또 하나 포인트
+
+static 멤버변수는 생성자에서 초기화 불가능하다
+생성자에서 초기화해주려면 생성자가 static이어야 하는데 
+cpp에서는 static 생성자 은 없다
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+private:
+	static int s_value;
+	int m_value;
+
+public:
+
+// static variable은 constructor에서 초기화 안됨
+//	Something()
+//		: m_value(123), s_value(1024)
+//	{}
+
+	static int getValue()
+	{
+		return s_value;
+	}
+
+	int temp()
+	{
+		return this->s_value;;
+	}
+
+};
+
+int Something::s_value = 1024;
+
+int main()
+{
+	cout << Something::getValue() << endl;
+
+	Something sth1, sth2;
+	cout << sth1.getValue() << endl;
+
+	int (Something::*fptr1)() = &Something::temp;
+	cout << (sth2.*fptr1)() << endl;		
+
+	int (*fptr2)() = &Something::getValue;
+	cout << Something::getValue() << endl;
+
+
+	return 0;
+
+}
+
+```
+
+그래도 우회해서 초기화해주는 방법이 있긴 하다
+클래스 안의 클래스, inner class를 이용하면 된다
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	// inner class로 _init class 만들기
+	class _init
+	{
+	public:
+		// inner class의 생성자
+		_init()
+		{
+			// 여기서 초기화
+			s_value = 9876;
+		}
+	};
+
+private:
+	static int s_value;
+	int m_value;
+	// inner class를 이용해서 initializer만들기
+	static _init s_initializer;
+
+public:
+	static int getValue()
+	{
+		return s_value;
+	}
+
+	int temp()
+	{
+		return this->s_value;;
+	}
+
+};
+
+int Something::s_value = 1024;
+// 초기화
+Something::_init Something::s_initializer;
+
+int main()
+{
+	cout << Something::getValue() << endl;
+
+	Something sth1, sth2;
+	cout << sth1.getValue() << endl;
+
+	int (Something::*fptr1)() = &Something::temp;
+	cout << (sth2.*fptr1)() << endl;		
+
+	int (*fptr2)() = &Something::getValue;
+	cout << Something::getValue() << endl;
+
+
+	return 0;
+
+}
+```
+
+즉, inner class를 이용한다면 
+Something class 안에서 static 멤버변수도 초기화해줄 수 있다.

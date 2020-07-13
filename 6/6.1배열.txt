@@ -1,0 +1,127 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{	
+	int one_student_score;
+	int student_scores[5];
+
+	cout << sizeof(one_student_score) << endl;	// 4
+	cout << sizeof(student_scores) << endl;		// 20
+
+	return 0;
+}
+```
+
+구조체 배열
+
+```
+#include <iostream>
+
+using namespace std;
+
+struct Rectangle
+{
+	int length;
+	int width;
+};
+
+int main()
+{	
+	cout << sizeof(Rectangle) << endl;	// 8. 패딩때문에 안의 변수의 자료형 합으로 안찍힐 수도 있다
+	
+	Rectangle rect_arr[10];
+
+	cout << sizeof(rect_arr) << endl;	// 80
+
+	return 0;
+}
+```
+
+참고로 뒤로 가면 array를 함수 파라미터로 주고받는 과정이 있는데,
+그 때가 되면 sizeof가 문제가 생길 수 있다 (뒤에 나올 예정)
+
+배열의 초기화 
+
+`int my_array[5] = { 1,2,3,4,5 };`
+
+int my_array[5] = { 1,2 };`
+
+이렇게 하면 나머지는 0으로 초기화
+
+안의 숫자가 명확하면 배열의 수는 생략 가능 `int my_array[] = { 1,2,3,4,5 };` 
+
+C++11부터는 `int my_array[]{ 1,2,3,4,5 };` 이렇게도 가능
+
+
+enum과 함께 쓰기
+
+```
+#include <iostream>
+
+using namespace std;
+
+enum StudentName
+{
+	JACKJACK,		// = 0
+	DASH,			// = 1
+	VIOLET,			// = 2
+};
+
+int main()
+{	
+	int my_array[]{ 1, 2, 3, 4, 5 };
+	int students_scores[VIOLET];		// 이렇게 선언하는 방법도 있음
+
+	cout << my_array[JACKJACK] << endl;
+	cout << my_array[DASH] << endl;
+	cout << my_array[VIOLET] << endl;
+	cout << my_array[3] << endl;
+	cout << my_array[4] << endl;
+
+	return 0;
+}
+```
+
+array size는 컴파일 시간 때 고정이 되어야 한다.
+즉, 배열의 대괄호 속 값은 컴파일할 떄 결정되어야 한다
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{	
+	int num_students = 0;
+	cin >> num_students;
+
+	int students_scores[num_students];		// 컴파일할 때 num_students가 결정되지 않았기 때문에 (런타임에 결정되기 때문에) 에러가 난다
+
+	return 0;
+}
+```
+
+굳이 쓰고 싶다면 동적할당을 쓰자. 
+아래처럼 매크로로 써줘도 되지만 권장하지는 않는다. 동적할당을 하자.
+
+```
+#include <iostream>
+
+using namespace std;
+
+#define NUM_STUDENTS 100000 // 큰 숫자를 잡음
+
+int main()
+{	
+	int num_students = 0;
+	cin >> num_students;
+
+	int students_scores[NUM_STUDENTS];
+
+	return 0;
+}
+```
+

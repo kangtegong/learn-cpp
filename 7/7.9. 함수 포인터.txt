@@ -1,0 +1,257 @@
+함수도 메모리에 들어간다
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int func()
+{
+	return 5;
+}
+
+int main()
+{
+	cout << func << endl;	// 00851726 (func함수가 있는 메모리 주소)
+
+	return 0;
+}
+```
+
+함수도 변수처럼 주소만 가지고도 작업들을 수행할 수 있다,
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int func()
+{
+	return 5;
+}
+
+int bar()
+{
+	return 10;
+}
+
+int main()
+{
+	// 함수 포인터 선언 방법
+	int(*fcptr)() = func;
+	// 함수 포인터가 가리키고 있는 걸 실행도 가능
+	cout << fcptr() << endl;		// 5
+
+	// 가리키고 있는 값 재할당 가능
+	fcptr = bar;
+	cout << fcptr() << endl;		// 10
+
+	return 0;
+}
+```
+
+물론 함수 포인터 변수의 자료형 int(*fcptr)() (리턴타입, 매개변수) 은 대입하려고 하는 
+험수와 동일해야 함
+
+예를 들어
+
+int(*tcptr)(int) 으로 선언했으면
+int(*tcptr)(int) = bar; 불가
+
+
+함수 포인터를 함수 파라미터로 넣을 수 있음
+일단 아래와 같은 함수가 있다고 해보자
+
+```
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+// 짝수, 홀수 출력하는 함수
+void printNumbers(const array <int, 10> &my_array, bool print_even)
+{
+	for (auto element : my_array)
+	{
+		if (print_even && element % 2 == 0) cout << element;
+		if (!print_even && element % 2 == 1) cout << element;
+	}
+	cout << endl;
+
+}
+
+int main()
+{
+	std::array<int, 10> my_array = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	printNumbers(my_array, true);
+	printNumbers(my_array, false);
+
+	return 0;
+}
+
+
+```
+
+이걸 함수 포인터를 이용해 조금 더 가공해보자
+
+일단 짝수면 true 리턴하는 isEven, 홀수면 true 반환하는 isOdd를 만들어보자
+
+```
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+bool isEven(const int& number)
+{
+	if (number % 2 == 0) return true;
+	else return false;
+}
+
+bool isOdd(const int& number)
+{
+	if (number % 2 != 0) return true;
+	else return false;
+}
+
+// void printNumbers(const array <int, 10> &my_array, bool print_even)
+void printNumbers(const array <int, 10> &my_array, bool (*check_func)(const int&))
+{
+	for (auto element : my_array)
+	{
+		if (check_func(element)==true) cout << element;
+	}
+	cout << endl;
+
+}
+
+int main()
+{
+	std::array<int, 10> my_array = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	printNumbers(my_array, isEven);
+	printNumbers(my_array, isOdd);
+
+	return 0;
+}
+```
+
+함수 포인터도 기본 매개변수를 가질 수 있다.
+
+void printNumbers(const array <int, 10> &my_array, bool (*check_func)(const int&) = isEven)
+
+그러면 
+
+printNumbers(my_array);		// 02468
+
+
+함수포인터는 위에서 보는 것 처럼 코드가 길어질 때가 많은데, 
+이럴 때 쓰는게 typedef
+
+```
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+bool isEven(const int& number)
+{
+	if (number % 2 == 0) return true;
+	else return false;
+}
+
+bool isOdd(const int& number)
+{
+	if (number % 2 != 0) return true;
+	else return false;
+}
+
+typedef bool(*check_fcn_t)(const int&);
+
+void printNumbers(const array <int, 10> &my_array, check_fcn_t check_func = isEven)
+{
+	for (auto element : my_array)
+	{
+		if (check_func(element)==true) cout << element;
+	}
+	cout << endl;
+
+}
+
+int main()
+{
+	std::array<int, 10> my_array = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	printNumbers(my_array, isEven);
+	printNumbers(my_array, isOdd);
+
+	return 0;
+}
+```
+
+그리고 using을 이용한 type alias도 쓸 수 있다.
+
+```
+// typedef bool(*check_fcn_t)(const int&);
+using check_fcn_t = bool(*)(const int&);
+
+void printNumbers(const array <int, 10> &my_array, check_fcn_t check_func = isEven)
+{
+	for (auto element : my_array)
+	{
+		if (check_func(element)==true) cout << element;
+	}
+	cout << endl;
+
+}
+```
+
+이보다 더 편한 C++11의 <functional> 
+이런거 잘 알아두면 매우 편할 듯
+
+```
+#include <iostream>
+#include <array>
+#include <functional>
+
+using namespace std;
+
+bool isEven(const int& number)
+{
+	if (number % 2 == 0) return true;
+	else return false;
+}
+
+bool isOdd(const int& number)
+{
+	if (number % 2 != 0) return true;
+	else return false;
+}
+
+// 받을 때는 이렇게 받아옴
+void printNumbers(const array <int, 10> &my_array, 
+	std::function<bool(const int&)> check_func = isEven)
+{
+	for (auto element : my_array)
+	{
+		if (check_func(element)==true) cout << element;
+	}
+	cout << endl;
+
+}
+
+int main()
+{
+	std::array<int, 10> my_array = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	std::function<bool(const int&)> fcnptr = isEven;
+	printNumbers(my_array, fcnptr);
+	fcnptr = isOdd;
+	printNumbers(my_array, fcnptr);
+
+	return 0;
+}
+
+```

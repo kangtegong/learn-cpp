@@ -1,0 +1,147 @@
+(조금 어려운 부분)
+
+동일한 이름의 함수를 여러 개 만드는 것 == 함수 오버로딩
+
+들어오는 데이터 타입은 다른데 수행하는 내용은 비슷비슷한 경우 함수 오버로딩 사용
+
+```
+// int 끼리 더하는 함수
+int int_add(int x. int y)
+{
+	return x + y;
+}
+
+// double끼리 더하는 함수
+double double_add(double x, double y)
+{
+	return x + y;
+}
+```
+
+오버로딩된 add라는 만들어보자
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int add(int x, int y)
+{
+	return x + y;
+}
+
+double add(double x, double y)
+{
+	return x + y;
+}
+
+
+int main()
+{
+
+	// 이렇게 적어주면 컴파일러가 알아서 "컴파일할 때" 함수를 찾아서 계산해준다
+	cout << add(1, 2) << endl;
+	cout << add(1.0, 4.1) << endl;
+
+	return 0;
+}
+```
+
+참고로 함수가 같다, 다르다를 판단하는 기준은 함수이름 뿐 아니라 매개변수도 고려된다
+따라서 함수 이름, 매개변수가 같다면 에러가 생긴다
+
+```
+int add(int x, int y)
+{
+	return x + y;
+}
+
+double add(int x, int y)
+{
+	return x + y;
+}
+```
+
+이러면 바로 에러가 난다는 말.
+
+즉, C++에서는 리턴 타입이 다른 것만 가지고는 함수 오버로딩이 안된다.
+매개변수가 달라야 함
+
+
+
+
+그럼 아래처럼 함수 이름도 같고 파라미터는 같은데
+리턴값만 다른 경우에는 어떻게 오버로딩해야 할까?
+
+```
+int getRandom() {}
+
+double getRandom() {}
+```
+
+1. 함수 이름을 바꾼다 (오버로딩 자체를 안함)
+2. 함수 오버로딩에서 함수를 구분짓는건 매개변수니까 아래처럼 매개변수로 구분
+
+```
+void getRandom(int &x) { }
+void getRamdon(double &x) { }
+```
+
+
+typedef inf my_int; 처럼 typedef로 정의한 자료형도 같은 타입으로 검사가 된다
+
+```
+// 오버로딩 안됨
+void print(int x) { }
+void print(my_int){ }
+```
+
+
+의미가 불분명한 경우 (매치가 정확히 안되는 경우)
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void print(char *value) {}
+void print(int value) {}
+void print(unsigned int value) { }
+void prnt(float value) { }
+
+int main()
+{
+	print(0);
+	print('a');	// void print(int value)로 인식
+	// print("a");	//이건 또 매치되는게 없다고 나온다
+	// 만약 void print(const char *value){ } 였다면 print("a") 잘 인식함
+
+	return 0;
+}
+```
+
+의미가 불분명한 경우(둘 다 매칭되서 모호한 경우)
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void print(unsigned int value) { }
+void prnt(float value) { }
+
+int main()
+{
+	print('a');		// 위 두 함수 모두와 매칭되서 ambiguous 한 상황
+	print(0);
+	print(3.14159);
+
+	return 0;
+}
+
+
+```
+

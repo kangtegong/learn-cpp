@@ -1,0 +1,111 @@
+지역변수의 범위와 지속기간
+
+범위 = scope, 눈으로 볼 수 있는 영역
+지속기간 = duration, 메모리에 지속해 있는 기간
+
+```
+#include<iostream>
+#include<bitset>
+
+int main() {
+	using namespace std;
+
+	// 중괄호를 이용하여 block 정의
+
+	int apple = 5;
+	cout << apple << endl;
+
+	{
+		cout << apple << endl; // 5
+		apple = 1;
+		cout << apple << endl; // 1
+	}
+
+	cout << apple << endl;		// 1
+
+	{
+		cout << apple << endl;	// 1
+		int apple = 2;
+		cout << apple << endl;	// 2
+	}
+	cout << apple << endl;		// 1
+
+	return 0;
+}
+```
+
+```
+// 이름은 같은데 파라미터가 다른 다른 경우 - 다른 함수 취급
+
+void doSomething()
+{
+	// code
+}
+
+void doSomething(int num)
+{
+	// code
+}
+
+// 이름 리턴값 파라미터도 같은 경우 - 같은 함수 취급 - 에러
+
+```
+
+
+그래서 namespace를 사용한다
+
+```
+#include<iostream>
+#include<bitset>
+
+
+namespace work1
+{
+	int a = 1;
+	void doSomething()
+	{
+		a += 3;
+	}
+}
+
+namespace work2
+{
+	int a = 1;
+	void doSomething()
+	{
+		a += 5;
+	}
+}
+
+int main() {
+	using namespace std;
+
+	work1::a;
+	work1::doSomething();
+
+	work2::a;
+	work2::doSomething();
+
+	return 0;
+}
+```
+
+
+
+C++ 17 부터는 이렇게 겹친(nested) namespace도 사용가능해졌다
+
+```
+namespace work1
+{
+	namespace work11
+	{
+		namespace work111
+		{
+		}
+	}
+}
+```
+
+work1::work11::work111::doSomething();
+
+그래도 depth를 얕게 가지고 가는 걸 추천한다..

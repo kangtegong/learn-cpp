@@ -1,0 +1,95 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main() 
+{
+	for (int count = 0; count < 10; ++count)
+	{
+		cout << count << endl;
+	}
+	// 여기서 count 쓰려고 하면 못씀
+	// cout << count << endl;		// 에러
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main() 
+{
+	// for문 밖에서 count 변수 쓰고 싶으면 이렇게 for문 밖에서 선언해주어야 함
+	int count = 0;
+	// 그리고 이 경우 for문 첫번째 요소는 비워두어도 무방
+	for (; count < 10; ++count)
+	{
+		cout << count << endl;
+	}
+	cout << count << endl;
+
+	return 0;
+}
+```
+
+
+```
+// for문의 무한루프
+for(;;;)
+
+
+int count = 0;
+for(;;++count);
+
+```
+```
+// 거듭제곱 수 만들기
+
+#include <iostream>
+
+using namespace std;
+
+int pow(int base, int exponenet)
+{
+	int result = 1;
+	for (int count = 0; count < exponenet; ++count)
+		result *= base;
+	return result;
+}
+
+int main() 
+{
+	std::cout << pow(2, 4);
+	return 0;
+}
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main() 
+{
+	// 한 for문에서 반복제어변수 두 개 이상 사용하기
+	for (int i = 0, j = 0; (i + j) < 10; ++i, j += 2)
+	{
+		cout << i << " " << j << endl;
+	}
+
+}
+```
+
+```
+	// 한 for문에서 반복제어변수 두 개 이상 사용하기
+	int i = 0, j = 0;
+	for (; (i + j) < 10; ++i, j += 2)
+	{
+		cout << i << " " << j << endl;
+	}
+```

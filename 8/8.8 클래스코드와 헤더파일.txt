@@ -1,0 +1,117 @@
+클래스 길이가 점점 길어지고 있다
+
+그래서 클래스를 만들 때는 헤더 파일에 선언, 정의를 분리하는 경우가 많음
+
+아래 클래스를 헤더파일(Calc.h)에 넣어보자
+
+```
+# pragma once
+
+class Calc
+{
+private:
+	int m_value;
+
+public:
+	Calc(int init_value)
+		: m_value(init_value)
+	{}
+
+	Calc& add(int value) { m_value += value; return *this;}
+	Calc& sub(int value) { m_value -= value; return *this;}
+	Calc& mult(int value) { m_value *= value; return *this;}
+
+	void print()
+	{
+		// 여기서 조심해야하는게 using namespace.. 자칫하면 헤더파일 전체에 영향이 갈 수 있다.
+		using namespace std;
+		cout << m_value << endl;
+	}
+
+};
+```
+
+
+그리고 이번엔 cpp파일로 돌아와서
+
+```
+#include "Calc.h"
+
+int main()
+{
+	Calc cal(10);
+	cal.add(10).sub(1).mult(2).print();
+
+	return 0;
+}
+```
+
+
+근데도 여전히 header파일이 무겁다
+
+header 파일에서는 선언만하고 
+따로 또 cpp 파일(Calc.cpp)을 만들어서 정의부를 거기로 옮겨줄 수도 있다
+
+```
+// Calc.h
+# pragma once
+
+class Calc
+{
+private:
+	int m_value;
+
+public:
+	Calc(int init_value)
+		: m_value(init_value)
+	{}
+
+	Calc& add(int value) 
+	Calc& sub(int value) 
+	Calc& mult(int value) 
+	void print()
+
+};
+
+```
+
+```
+// Calc.cc
+#include "Calc.h"
+
+// cpp 파일 안에서는 using namespce 사용 가능
+using namespace std;
+
+//Calc 안에 속해있다는 의미로 함수명 앞에 Calc:: 써줘야함
+
+Calc& Calc::add(int value)
+{
+	m_value += value;
+	return *this;
+}
+
+Calc& Calc::sub(int value)
+{
+	m_value -= value;
+	return *this;
+}
+
+Calc& Calc::mult(int value)
+{
+	m_value *= value;
+	return *this;
+}
+
+
+```
+
+visual studio에서는 자동으로 분리해주는 개꿀 기능이 있다
+
+헤더파일의 함수 이름에 오른클릭 > Quick Actions and Refactorings > Move Definition location
+
+오픈소스에서 코드 볼 때
+헤더파일 보고 감 잡고
+그 다음 cpp 보면서 자세히 들어가기
+
+나중되면 처음부터 헤더를 만들고 클래스를 거기서 클래스를 만들며 시작하기도 함
+

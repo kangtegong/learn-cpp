@@ -1,0 +1,272 @@
+여러 클래스들간의 상호작용 쉽게 표기하기
+특히 friend 키워드는 연산자 오버로딩에서 많이 쓰인다
+
+```
+#include <iostream>
+using namespace std;
+
+class A
+{
+private:
+	int m_value = 1;
+};
+
+// A에 접근해서 A의 private 멤버 출력하고 싶은 함수
+void doSomething(A& a)
+{
+	cout << a.m_value << endl;
+}
+
+int main()
+{
+
+	return 0;
+
+}
+
+```
+
+원칙대로라면 doSomething이라는 함수는 클래스 A의 private 멤버에 접근이 불가능하다.
+하지만 그 함수를 특정 클래스의 friend로 등록하면 private 멤버에 접근이 가능하다
+
+```
+#include <iostream>
+using namespace std;
+
+class A
+{
+private:
+	int m_value = 1;
+	friend void doSomething(A& a);
+
+};
+
+// A에 접근해서 A의 private 멤버 출력하고 싶은 함수
+void doSomething(A& a)
+{
+	cout << a.m_value << endl;
+}
+
+int main()
+{
+	A a;
+	doSomething(a);
+	return 0;
+
+}
+
+```
+
+
+두 개의 클래스끼리 상호작용시키기
+
+```
+#include <iostream>
+using namespace std;
+
+class A
+{
+private:
+	int m_value = 1;
+	// 이렇게 쓰면 문제는 A가 빌드될 때 B에 대해 모르기 빌드가 안된다.
+	friend void doSomething(A& a, B& b);
+
+};
+
+class B
+{
+private:
+	int m_value = 2;
+	friend void doSomething(A& a, B& b);
+};
+
+void doSomething(A& a, B& b)
+{
+	cout << a.m_value << " " << b.m_value << endl;
+}
+
+int main()
+{
+	A a;
+	doSomething(a);
+	return 0;
+
+}
+
+```
+
+이럴 때 쓸 수 있는게 전방 선언
+
+
+```
+#include <iostream>
+using namespace std;
+
+// 전방선언(forward declaration). 일단 class B라는 것이 있다. 알고 넘어가라
+class B;
+
+class A
+{
+private:
+	int m_value = 1;
+	friend void doSomething(A& a, B& b);
+
+};
+
+class B
+{
+private:
+	int m_value = 2;
+	friend void doSomething(A& a, B& b);
+};
+
+void doSomething(A& a, B& b)
+{
+	cout << a.m_value << " " << b.m_value << endl;
+}
+
+int main()
+{
+	A a;
+	doSomething(a);
+	return 0;
+
+}
+
+```
+
+이번엔 doSomething같은 외부에 있는 함수 말고
+다른 클래스가 내 private member에 접근할 수 있게 해 보자
+
+첫 번째 방법
+
+class A에서 class B와 친구맺기
+
+```
+#include <iostream>
+using namespace std;
+
+// 전방선언(forward declaration). 일단 class B라는 것이 있다. 알고 넘어가라
+class B;
+
+class A
+{
+private:
+	int m_value = 1;
+	// class B와 친구관계 맺기
+	friend class B;
+};
+
+class B
+{
+private:
+	int m_value = 2;
+
+public:
+	void doSomething(A& a)
+	{
+		cout << a.m_value <<  endl;
+	}
+
+};
+
+int main()
+{
+	A a;
+	B b;
+
+	b.doSomething(a);
+	return 0;
+
+}
+
+```
+
+특정 멤버함수만 친구맺기 (friend member function)
+
+```
+#include <iostream>
+using namespace std;
+
+// 여기서 이렇게 class A를 전방선언해도 A안에 m_value가 있다는 건 모르니까 여전히 이러면 에러가 뜬다
+class A;
+
+class B
+{
+private:
+	int m_value = 2;
+
+public:
+	void doSomething(A& a)
+	{
+		// 비록 전방선언했어도 a 안에 m_value가 있는줄 모른다
+		// 여기서 에러
+		cout << a.m_value << endl;
+	}
+
+};
+
+class A
+{
+private:
+	int m_value = 1;
+	friend void B::doSomething(A& a);
+};
+
+
+int main()
+{
+	A a;
+	B b;
+
+	b.doSomething(a);
+	return 0;
+
+}
+
+```
+
+이럴 땐 멤버함수의 정의와 선언을 분리하자
+
+```
+#include <iostream>
+using namespace std;
+
+// 여기서 이렇게 class A를 전방선언해도 A안에 m_value가 있다는 건 모르니까 여전히 이러면 에러가 뜬다
+class A;
+
+class B
+{
+private:
+	int m_value = 2;
+
+	// 프로토타입 선언부만 두기
+public:
+	void doSomething(A& a);
+
+};
+
+class A
+{
+private:
+	int m_value = 1;
+	friend void B::doSomething(A& a);
+};
+
+// 여기서 정의부까지 포함하기
+void B::doSomething(A& a)
+{
+	cout << a.m_value << endl;
+}
+
+int main()
+{
+	A a;
+	B b;
+
+	b.doSomething(a);
+	return 0;
+
+}
+
+```

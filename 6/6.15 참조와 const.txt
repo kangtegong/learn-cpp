@@ -1,0 +1,43 @@
+함수의 파라미터 참조를 사용하면 쉽게 쓸 수 있음
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(const int& x)
+{
+	cout << x << endl;
+}
+
+int main()
+{
+	int x = 5;
+	int &ref_x = x;
+	
+	// ref 변수는 메모리 주소가 있어야만 선언 가능
+	// int &ref_x; 이런 거 안되고
+	// int &ref_x = 5; 이렇게 상수도 넣을 수 없음
+	// 근데 const ref는 가능하다!!
+
+	const int &ref_y = 3 + 4;
+
+	// 값도 찍을 수 있고 주소도 찍을 수 있음
+	
+	cout << ref_y << endl;
+	cout << &ref_y << endl;
+
+	// 그럼 그냥 변수랑 다를게 뭐임? int &ref_y = 3 + 4;
+	// 함수 파라미터 호출할 때 편함
+
+	int a = 1;
+	// const reference로 함수 파라미터를 선언하면
+	// 인자로 숫자, 변수 모두 줄 수 있다.
+	// void doSomething(const int& x)
+	doSomething(a);
+	doSomething(2);
+
+	return 0;
+}
+
+```

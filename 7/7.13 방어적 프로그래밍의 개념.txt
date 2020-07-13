@@ -1,0 +1,13 @@
+많은 사람들이 쓰는 SW를 개발할 때는 사용자가 무슨 짓을 해도 정상적으로 동작해야 한다
+
+syntax error
+
+semantic error
+
+logical error
+
+violated assumption
+	사용자가 내가 작성한 의도와는 다른 의도로 프로그램을 작성한다
+
+
+(별 거 없음)

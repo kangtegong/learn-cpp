@@ -1,0 +1,42 @@
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Friend
+{
+public:	// access specifier (public, protected, private)
+	string	name;
+	string	address;
+	int		age;
+	double	height;
+	double	weight;
+
+	void print()
+	{
+		cout << name << " " << address << " " << age << " " << height << " " << weight << endl;
+	}
+
+};
+
+int main(int argc, char *argv[])
+{
+	// Friend를 마치 사용자 정의 자료형처럼 사용
+	// 이렇게 메모리를 차지하도록 변수로 선언해주는 걸 instanciation라고 부름 
+	// 그리고 이렇게 만들어진 걸 instance 라고 함
+	Friend jj{ "JackJack", "Uptown", 2, 30, 10 };
+	jj.print();
+
+	// 여러 Friend 만들 경우 : vector로 묶어주기!
+	vector<Friend> my_friends;
+	my_friends.resize(2);		// 친구 두 명
+
+	for (auto &ele : my_friends)
+		ele.print();
+
+
+	return 0;
+}
+
+```

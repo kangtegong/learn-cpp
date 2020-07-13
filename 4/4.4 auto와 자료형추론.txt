@@ -1,0 +1,52 @@
+큰 프로그램에서는 자료형이 모호할 수 있음
+
+int a = 123;
+
+이라호 하면 사실 123이 정수인데 굳이 int를 쓸 필요가 없음
+
+auto a = 123 하면 
+자동으로 int a = 123; 이 된다 (auto에 마우스 갖다대면 연산결과 자료형이 나옴)
+
+이 때, 당연하지만 초기화해주지 않으면 auto를 쓸 수 없다
+
+
+
+
+
+함수의 return값에서도 auto를 쓸 수 있음
+
+```
+int add (int x, int y)
+{ 
+	return x + y;
+}
+
+auto result = add(1, 3);
+```
+
+이렇게.
+
+함수의 리턴타입을 외울 필요 없음
+
+```
+// 함수 자체도 auto로 리턴 가능
+auto add (int x, int y)
+{ 
+	return x + y;
+}
+
+auto result = add(1, 3);
+```
+
+근데 auto add(auto x, auto y) 처럼 매개변수에서까지 auto는 안됨.
+대신 auto 대신 template을 사용함 (auto보다 더 어려움)
+template을 쓰면 C++17부터 여러 리턴값을 보내주기도 편리해짐
+
+그리고 auto가 무엇으로 리턴될지 뒤늦게 화살표로 써줄수도 잇음. trailing이라고도 함
+```
+auto add(int x, int y) -> int		
+auto add(int x, int y) -> double
+```
+
+코드 정리할 떄 보기 좋음...
+

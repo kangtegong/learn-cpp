@@ -1,0 +1,97 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	// char name[] = "Jack JAck";
+	// 그럼 아래처럼은 안되나? 안된다. 
+	// Jack Jack은 리터럴이라 포인터 변수에 담길 수는 없음
+	// char *name = "Jack Jack";
+
+	// 그래도 const를 이용하면 Jack Jack이라는 문자열 리터럴을 기호적인 상수처럼 쓸 수 있다.
+	const char *name = "Jack Jack";
+
+	// name2를 선언하고 주소를 찍어보자
+	const char *name2 = "Jack Jack";
+
+	cout << (uintptr_t)name << endl;
+	cout << (uintptr_t)name2 << endl;
+	// 놀랍게도 둘이 같은 주소가 찍힌다!
+
+	// 다른 문자열을 담으면 또 다른 주소가 찍힌다
+	const char *name3 = "Jack Jack2";
+	cout << (uintptr_t)name3 << endl;
+
+	return 0;
+}
+
+```
+
+함수의 리턴 타입으로도 const char *를 쓸 수 있다
+
+```
+#include <iostream>
+
+using namespace std;
+
+const char * getName()
+{
+	return "Jack Jack";
+}
+
+int main()
+{
+	cout << getName() << endl;
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	// 문자 포인터의 특성
+	int int_arr[5] = { 1, 2, 3, 4, 5 };
+	char char_arr[] = "Hello World!";
+	const char *name = "Jack Jack";
+
+	cout << int_arr << endl;	// 0085FD2C		주소가 나옴
+	cout << char_arr << endl;	// Hello World!		문자열이 나옴
+	cout << name << endl;		// Jack Jack	문자열이 나옴
+
+	return 0;
+}
+
+```
+
+cout에서 문자열은 조금 특별하게 처리한다.
+cout은 문자의 포인터가 들어오면 "어, 문자열이 아닐까" 의심을 한다.
+따라서 문자의 포인터가 들어오면 
+문자의 주소가 나오지 않고 널문자가 나올 때 까지 쭉 출력한다.
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	char c = 'Q';
+	cout << &c << endl;		// Q儆儆?P佈
+
+	return 0;
+}
+
+```
+
+위 예제도 마찬가지이다.
+cout << &c << endl;를 하게 되면 문자의 주소가 아니라
+널 문자를 만날 때까지 쭉 문자를 출력하게 된다.

@@ -1,0 +1,81 @@
+```
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+// std::array를 파라미터로 넘길 때 
+void printLength(array<int, 5> my_arr)
+{
+	cout << my_arr.size() << endl;
+}
+
+// std::array를 복사해서 파라미터로 갖고오는게 아니라 아예 통째로 갖고오고 싶을 때
+void printLength(array<int, 5>& my_arr)
+{
+	cout << my_arr.size() << endl;
+}
+
+int main()
+{
+	// int array[5] = { 1, 2, 3, 4, 5 };
+	std::array<int, 5> my_arr = { 1, 2, 3, 4, 5 };
+	array<int, 5> my_arr = { 1, 2, 3, 4, 5 };
+
+	my_arr = { 6, 7, 8, 9, 10 };
+	my_arr = { 11, 12 };	// 더 적거나 같은 갯수의 새로운 할당 가능
+
+	// out of index error
+	cout << my_arr[10] << endl;			// 기존의 outof index는 그냥 에러
+	cout << my_arr.at(10) << endl;		// at은 미리 체크를 해보고 문제가 발생하면 예외처리를 발생시킴
+
+	// 편의기능 : size
+
+	cout << my_arr.size() << endl;
+
+	// 함수 파라미터로 넘길 때 원래 성질이 그대로 유지됨
+
+
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+#include <array>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	array<int, 5> my_arr = { 1, 21, 3, 40, 5 };
+
+	// std::array와 foreaach 문
+	for (auto element : my_arr)
+		cout << element << " ";
+	cout << endl;
+
+	// sorting : algorithm include 해주기
+	std::sort(my_arr.begin(), my_arr.end());
+
+	// 레퍼런스 for each 받아서 출력하기
+	for (auto &element : my_arr)
+		cout << element << " ";
+	cout << endl;
+
+	// 역순 sorting : rbegin, rend
+	std::sort(my_arr.rbegin(), my_arr.rend());
+
+	// 레퍼런스 for each 받아서 출력하기
+	for (auto &element : my_arr)
+		cout << element << " ";
+	cout << endl;
+
+	return 0;
+}
+
+```

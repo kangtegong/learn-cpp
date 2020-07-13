@@ -1,0 +1,128 @@
+위임 생성자 delegating constructor
+
+생성자가 다른 생성자를 사용하는 것
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Student
+{
+private:
+	int m_id;
+	string	m_name;
+
+public:
+
+	// 이런 식으로 생성자를 두 개 이상 만들 수 있다
+	// but 이런 식(중복된 초기화)의 코드는 아아주 비추천
+	Student(const string& name_in)
+		: m_id(0), m_name(name_in)
+	{}
+
+	Student(const int& id_in, const string& name_in)
+		: m_id(id_in), m_name(name_in)
+	{}
+
+	void print()
+	{
+		cout << m_id << " " << m_name << endl;
+	}
+};
+
+int main()
+{
+	Student st1(0, "Jack Jack");
+	st1.print();
+
+	Student st2("dash");
+	st2.print();
+
+	return 0;
+}
+```
+
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Student
+{
+private:
+	int m_id;
+	string	m_name;
+
+public:
+	// 이 생성자에서 다른 생성자를 갖다 쓸 수 있다.
+	// 이런 식의 생성자를 위임생성자라고 한다
+	Student(const string& name_in)
+		//: m_id(0), m_name(name_in)
+		: Student(0, name_in)
+	{}
+
+	Student(const int& id_in, const string& name_in)
+		: m_id(id_in), m_name(name_in)
+	{}
+
+	void print()
+	{
+		cout << m_id << " " << m_name << endl;
+	}
+};
+
+int main()
+{
+	Student st1(0, "Jack Jack");
+	st1.print();
+
+	Student st2("dash");
+	st2.print();
+
+	return 0;
+}
+```
+
+초기화 함수를 별도로 만드는 방법
+
+위임 생성자를 쓰는 방법 중 하나 중
+만능 초기화 함수를 하나 만들어서
+생성자에서 초기화 작업을 안하고 
+생성자에서 그 만능 초기화 함수를 쓰는 방식도 있다
+
+```
+class Student
+{
+private:
+	int m_id;
+	string	m_name;
+
+public:
+	Student(const string& name_in)
+	{
+		init(0, name_in);
+	}
+
+	Student(const int& id_in, const string& name_in)
+	{
+		init(id_in, name_in);
+	}
+
+	// 만능 초기화 함수
+	void init(const int& id_in, const string& name_in)
+	{
+		m_id = id_in;
+		m_name = name_in;
+	}
+
+	void print()
+	{
+		cout << m_id << " " << m_name << endl;
+	}
+};
+
+```

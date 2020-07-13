@@ -1,0 +1,37 @@
+call by value
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int y)
+{
+	cout << "In func " << y << " " << &y << endl;
+}
+
+int main()
+{
+	doSomething(5);
+
+	int x = 6;
+
+	cout << "In main " << x << " " << &x << endl;		// 위에서 직은 &y와 다르다
+
+	doSomething(x);		// 실제로 전달되는 건 x가 아니라 x안에 들어있는 값
+	doSomething(x + 1); 
+
+	/*
+	In func 5 005FF768
+	In main 6 005FF83C
+	In func 6 005FF768
+	In func 7 005FF768
+	*/
+
+	// 주소가 다르기 때문에 함수 안에서 무슨 짓을 하든 간에
+	// 그 값을 넘겨준 main에게 영향을 미칠 수가 없음
+
+	return 0;
+}
+
+```

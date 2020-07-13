@@ -1,0 +1,50 @@
+선택정렬
+
+```
+#include <iostream>
+
+using namespace std;
+
+void printArray(const int array[], const int length)
+{
+	for (int index = 0; index < length; ++index)
+		cout << array[index] << " ";
+	cout << endl;
+}
+
+int main()
+{
+	const int length = 5;
+	int array[length] = { 3,5,2,1,4 };
+	printArray(array, length);
+
+	// swap (물론 std::swap() 함수 이미 있음
+	// int temp = array[0];
+	// array[0] = array[1];
+	// array[1] = temp;
+
+	for (int startIndex = 0; startIndex < length - 1; ++startIndex)
+	{
+		int smallestIndex = startIndex;
+
+
+		for (int currentIndex = startIndex + 1; currentIndex < length; ++currentIndex)
+		{
+			if (array[smallestIndex] > array[currentIndex])
+			{
+				smallestIndex = currentIndex;
+			}
+		}
+		
+		// swap 하는 과정 : std::swap(array[smallestIndex], array[startIndex])
+		{
+			int temp = array[smallestIndex];
+			array[smallestIndex] = array[startIndex];
+			array[startIndex] = temp;
+		}
+	}
+	printArray(array, length);
+
+	return 0;
+}
+```

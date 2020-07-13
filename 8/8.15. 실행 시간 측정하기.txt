@@ -1,0 +1,69 @@
+sorting하는 시간을 알려주는 시간을 측정하는 코드
+
+```
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
+
+using namespace std;
+
+class Timer
+{
+	using clock_t = std::chrono::high_resolution_clock;
+	using second_t = std::chrono::duration<double, std::ratio<1>>;
+	// 시작 시간. 인스턴스가 만들어진 시점의 시각 저장
+	std::chrono::time_point<clock_t> start_time = clock_t::now();
+
+public:
+	void elapsed()
+	{
+		// 현재시간 체크, 그 시간을 초로 변환하여 start time에서 빼기
+		std::chrono::time_point<clock_t> end_time = clock_t::now();
+		cout << std::chrono::duration_cast<second_t>(end_time - start_time).count() << endl;
+	}
+
+};
+
+int main()
+{
+	random_device rnd_device;
+	mt19937 mersenne_engine{ rnd_device() };
+
+	vector<int> vec(10);
+
+	for (unsigned int i = 0; i < vec.size(); ++i)
+		vec[i] = i;
+
+	// vector들 순서 섞기
+	std::shuffle(begin(vec), end(vec), mersenne_engine);
+
+	for (auto &e : vec) cout << e << " ";
+	cout << endl;
+
+	// 시간 재기 시작
+	Timer timer;
+
+	// sorting
+	std::sort(begin(vec), end(vec));
+
+	timer.elapsed();
+
+	for (auto &e : vec) cout << e << " ";
+	cout << endl;
+
+	return 0;
+}
+```
+
+디버그모드 말고 릴리즈 모드로 시간 재면 
+훨씬 빠르고 이게 더 정확한 수치이다.
+
+나중에 시간 잴 땐 릴리즈 모드로 재야 한다
+
+
+
+측정 시간은 정말 많은 요소에 의해 영향을 받는다
+최적화는 끝판왕
+시간 잴 때는 여러번 까다롭게 여러 요소들을 고려하며 재야 한다

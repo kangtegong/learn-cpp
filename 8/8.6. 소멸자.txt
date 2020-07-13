@@ -1,0 +1,175 @@
+소멸자 destructor
+
+변수가 영역을 벗어나서 사라질 때 
+destroy 될 때 호출되는 함수
+
+(정확히 언제 호출되나?)
+
+```
+#include <iostream>
+
+using namespace std;
+
+class Simple
+{
+private:
+	int m_id;
+
+public:
+	// 생성자
+	Simple(const int& id_in)
+		: m_id(id_in)
+	{
+		cout << "Contructor " << m_id << endl;
+	}
+
+	// 소멸자
+	~Simple()
+	{
+		cout << "Destructor " << m_id << endl;
+	}
+
+};
+
+int main()
+{
+	Simple s1(0);
+	Simple s2(1);
+
+	/*
+	Contructor 0
+	Contructor 1
+	Destructor 1
+	Destructor 0
+	*/
+
+	return 0;
+}
+```
+
+이번엔 동적할당으로 해 보자
+destructor 0이 먼저 호출된다
+
+```
+
+int main()
+{
+
+	// 이번엔 동적할당으로 해 보자
+
+	Simple *s1 = new Simple(0);
+	Simple s2(1);
+
+	delete s1;
+
+	/*
+	Contructor 0
+	Contructor 1
+	Destructor 0
+	Destructor 1
+	*/
+
+	return 0;
+}
+```
+
+소멸자는 instance가 메모리에서 해제될 때 내부에서 자동으로 호출된다.
+동적할당으로 만들어진 경우에는 영역을 벗어나도 자동으로 메모리가 해제되지
+않기 때문에 delete로 메모리를 해제할 때에만 소멸자가 호출된다.
+
+소멸자를 프로그래머가 직접 호출하는 것은 대부분의 경우 권장하지 않는다.
+
+
+
+
+소멸자가 많이 쓰이는 예시
+메모리를 delete할 때
+
+```
+#include <iostream>
+
+using namespace std;
+
+class intArray
+{
+private:
+	int *m_arr = nullptr;
+	int m_length = 0;
+
+public:
+	intArray(const int length_in)
+	{
+		m_length = length_in;
+		m_arr = new int[m_length];
+		cout << "Constructor " << endl;
+	}
+
+	int size() { return m_length; }
+};
+
+
+int main()
+{
+	while (true)
+	{
+		// memory leak 발생!
+		intArray my_int_arr(10000);
+	}
+
+	return 0;
+}
+```	
+
+```
+#include <iostream>
+
+using namespace std;
+
+class intArray
+{
+private:
+	int *m_arr = nullptr;
+	int m_length = 0;
+
+public:
+	intArray(const int length_in)
+	{
+		m_length = length_in;
+		m_arr = new int[m_length];
+		cout << "Constructor " << endl;
+	}
+
+	// 소멸자에 delete을 구현한다
+	~intArray()
+	{
+		delete[] m_arr;
+		/*
+		혹은 더 안전하게 프로그래밍하려면 아래와 같이 작성한다.
+		if (m_arr != nullptr) delete[] m_arr;
+		*/
+	}
+
+	int size() { return m_length; }
+};
+
+
+int main()
+{
+	while (true)
+	{
+		// memory leak 발생!
+		intArray my_int_arr(10000);
+	}
+	// while loop를 벗어나는 순간 소멸자 호출, 메모리 깔끔하게 지워줌
+
+	return 0;
+}
+```
+
+디버거를 확인해보면 이번에는 memory leak이 크게 늘어나지 않는다는 걸 알 수 있다.
+
+
+
+근데 소멸자, delete을 쓰는 것 조차 귀찮다면 그냥 vector쓰자
+vector의 소멸자에 이미 delete하는 과정이 구현되어 있다
+

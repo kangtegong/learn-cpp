@@ -1,0 +1,126 @@
+이름이 붙은 변수를 사용하지 않고 바로 사용하는 익명 객체
+L value가 아닌 R value처럼 사용되고
+한 번 사용되면 사라지는 객체
+
+```
+#include <iostream>
+using namespace std;
+
+class A
+{
+public:
+	void print()
+	{
+		cout << "Hello" << endl;
+	}
+};
+
+
+int main()
+{
+	A a;
+	a.print();
+
+	// 이렇게도 쓸 수 있다
+	// 이 때 A()가 R-value처럼 사용된다.
+	A().print();
+	//  여기서 아래처럼 동일한 코드를 실행시킨다고 해도 A()는 다른 객체다
+	// Destructor가 호출되기 때문
+	A().print();
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+using namespace std;
+
+class A
+{
+public:
+	
+	int m_value;
+
+	A(const int& input)
+		: m_value(input)
+	{
+		cout << "Constructor" << endl;
+	}
+
+	~A() 
+	{
+		cout << "Destructor" << endl;
+	}
+
+	void print()
+	{
+		cout << m_value << endl;
+	}
+};
+
+
+int main()
+{
+	A a(1);
+	a.print();
+
+	// 이렇게도 쓸 수 있다
+	// 이 때 A()가 R-value처럼 사용된다.
+	A(2).print();
+	//  여기서 아래처럼 동일한 코드를 실행시킨다고 해도 A()는 다른 객체다
+	// Destructor가 호출되기 때문
+	A(2).print();
+
+	/*
+Constructor
+1
+Constructor
+2
+Destructor
+Constructor
+2
+Destructor
+Destructor
+
+	*/
+
+	return 0;
+}
+
+```
+
+
+이런 식의 코딩도 가능하다
+
+```
+#include <iostream>
+using namespace std;
+
+class Cents
+{
+private:
+	int m_cents;
+public:
+	Cents(int cents) { m_cents = cents; }
+
+	int getCents() const { return m_cents; }
+};
+
+
+// Cents 클래스를 리턴하는 add함수
+Cents add(const Cents &c1, const Cents &c2)
+{
+	return Cents(c1.getCents() + c2.getCents());
+}
+
+int main()
+{
+	// add가 cents를 리턴하기 때문에 .getCents 가능하다
+	cout << add(Cents(6), Cents(8)).getCents() << endl;
+	return 0;
+}
+
+```

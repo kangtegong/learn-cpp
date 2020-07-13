@@ -1,0 +1,245 @@
+캡슐화를 유지하는 동시에 기본값을 줄 수 있는 방법이 없을까?
+
+```
+#include <iostream>
+
+using namespace std;
+
+class Fraction
+{
+private:
+	int m_numerator;	// 분자
+	int m_denominator;	// 분모
+
+public:
+	void print()
+	{
+		cout << m_numerator << "/" << m_denominator << endl;
+	}
+
+};
+
+int main()
+{
+	Fraction fra;
+	// 초기화를 안해줘서 이상한 값이 나옴
+	fra.print();		// -858993460/-858993460
+
+
+	return 0;
+}
+
+
+
+```
+
+이렇게 써 줘도 되기는 함
+
+```
+private:
+	int m_numerator = 0;	// 분자
+	int m_denominator = 1;	// 분모
+
+
+```
+
+근데 가장 바람직한 것은 생성자를 사용하는 것
+
+```
+#include <iostream>
+
+using namespace std;
+
+class Fraction
+{
+private:
+	int m_numerator;	// 분자
+	int m_denominator;	// 분ㅁ
+
+public:
+	// 생성자. 클래스와 같은 이름, 리턴 타입 없음
+	// 생성자는 외부에서 호출하려고 쓰는 메서드가 아님
+	// 선언이 됨과 동시에 실행이 됨.
+	Fraction()
+	{
+		// 이렇게 cout 찍고 디버깅해보자
+		cout << "Fraction Constructor" << endl;
+		m_numerator = 0;
+		m_denominator = 1;
+	}
+	
+	void print()
+	{
+		cout << m_numerator << "/" << m_denominator << endl;
+	}
+
+};
+
+int main()
+{
+	Fraction fra;
+	fra.print();		// 0/1
+
+
+	return 0;
+}
+
+```
+
+여기서 주의: instance 만들 때 생성자의 파라미터 유무에 따른 차이
+
+생성자의 파라미터가 없을 때 
+
+Fraction fra; 처럼 괄호 없음
+
+생성자 파라미터 있을 때 
+
+Fraction fra(); Fraction fra(1, 2); 처럼 반드시 괄호가 있어야 함
+
+이거 많이 틀리니까 주의하기
+
+```
+#include <iostream>
+
+using namespace std;
+
+class Fraction
+{
+private:
+	int m_numerator;	// 분자
+	int m_denominator;	// 분모
+
+public:
+	// 생성자 함수에 파라미터 넣어보기
+	// default value도 넣을 수 있다
+	Fraction(const int& num_in, const int& den_in = 1)
+	{
+		m_numerator = num_in;
+		m_denominator = den_in;
+	}
+	
+	void print()
+	{
+		cout << m_numerator << "/" << m_denominator << endl;
+	}
+
+};
+
+int main()
+{
+	Fraction one_thirds(1, 3);
+	one_thirds.print();
+
+	return 0;
+}
+```
+
+디폴트 생성자
+
+생성자가 없을 때 아무 일도 하지 않는 디폴트 생성자가 숨어있다
+
+만약 생성자를 따로 정의해주지 않으면 아래와 같은 디폴트 생성자가 있는 셈이다
+(컴파일러가 생성해줌)
+
+```
+class Fraction
+{
+private:
+	int m_numerator;	// 분자
+	int m_denominator;	// 분모
+
+public:
+	Fraction () { } // 생성자 선언해주지 않으면 이런 디폴트 생성자가 있는 셈
+	
+	void print()
+	{
+		cout << m_numerator << "/" << m_denominator << endl;
+	}
+
+};
+
+```
+
+그리고 컴파일러는 하나라도 생성자가 정의되어 있으면 생성자를 생성하지 않는다
+
+
+
+
+그리고 copy initialization을 하는 경우도 있다
+
+
+```
+int main()
+{
+	Fraction one_thirds = Fraction{ 1, 3 };
+
+	return 0;
+}
+```
+
+
+
+uniform initialization과 생성자 호출의 차이
+
+```
+int main()
+{
+	// 아래의 차이는 뭘가?
+	Fraction one_thirds { 1, 3 };
+	Fraction one_thirds(1, 3);
+
+	return 0;
+}
+```
+
+만일 멤버들이 public일 때는 생성자 없이 uniform initialization으로 초기화 가능 (Fraction one_thirds { 1, 3 };)
+private일 때는 안됨
+
+또 uniform initialization은 타입 변경이 불가능하지만 생성자는 가능하다
+
+```
+	Fraction one_thirds { 1.0, 3 };		// 이 경우 컴파일 에러
+	Fraction one_thirds(1.0, 3);			// 이 경우 warning만 뜨고 되긴 됨
+```
+
+클래스가 두 개 있을 경우
+
+```
+#include <iostream>
+using namespace std;
+
+class Second
+{
+public:
+	Second()
+	{
+		cout << "class Second constructor()" << endl;
+	}
+};
+
+class First
+{
+	Second sec;
+
+public:
+	First()
+	{
+		cout << "class First constructor()" << endl;
+	}
+};
+
+int main()
+{
+
+	First fir;	
+	/*
+	second의 constructor가 먼저 호출된다!!
+	class Second constructor()
+	class First constructor()
+	*/
+
+	return 0;
+}
+```
+
+부록 : 생성자를 private으로 설정하는 기법도 있긴 하다 (특별한 경우)

@@ -1,0 +1,58 @@
+포인터의 위험성 중에서, 쓰레기 주소값이 들어간 경우에 de-reference를 시도하게 되면
+엉뚱한 곳에서 데이터를 찾게 된다.
+
+이런 문제를 방지하기 위해 널 포인터를 사용한다.
+
+```
+// c style의 Null pointer
+double *ptr = 0;
+double *ptr = Null;
+
+// modern C++
+double *ptr = nullptr;
+double *ptr{ nullptr };
+```
+
+```
+if(ptr != nullptr)
+{
+	// do something useful
+}
+else
+{
+	// do nothing
+}
+```
+
+
+```
+void doSomething(doube *ptr)
+{
+	if (ptr != nullptr)
+	{
+		// do something useful
+	}
+	else
+	{
+		// do nothing with ptr
+	}
+}
+```
+
+
+<cstddef> 라이브러리 활용하기
+
+```
+#include <iostream>
+#include <cstddef>
+
+using namespace std;
+
+int main()
+{
+	std::nullptr_t nptr;	// 얘는 널 포인터밖에 못씀.
+						// 이거 좀 더 자세히 알아보기..
+
+	return 0;
+}
+````

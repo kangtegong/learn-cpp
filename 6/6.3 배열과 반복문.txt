@@ -1,0 +1,60 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int scores[] = { 84, 92, 70, 81, 56 };
+
+	// const int num_students = 5;
+	// 아니면 array size를 이렇게 구할 수도 있음
+	const int num_students = sizeof(scores) / sizeof(int);
+	// 단, score이 함수 파라미터에서 받아온 값일 경우 score은 포인터이기 때문에
+	// 4 나누기 4가 되어 1이 된다.
+
+	int total_score = 0;
+
+	for (int i = 0; i < num_students; ++i)
+	{
+		total_score += scores[i];
+	}
+
+	double avg_score = static_cast<double>(total_score) / num_students;
+
+	return 0;
+}
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int scores[] = { 84, 92, 70, 81, 56 };
+	const int num_students = sizeof(scores) / sizeof(int);
+	int max_score = 0;
+	int total_score = 0;
+
+	for (int i = 0; i < num_students; ++i)
+	{
+		total_score += scores[i];
+		if (max_score < scores[i]) max_score = scores[i];
+	}
+
+	double avg_score = static_cast<double>(total_score) / num_students;
+	cout << max_score << endl;
+
+	return 0;
+}
+```
+
+
+여기서 `for (int i = 0; i < num_students; ++i)` `i <= num_students;` 로 바꾸면 
+배열의 인덱스를 넘어서는 꼴이 되니까 
+런타임 에러가 난다.
+	
+

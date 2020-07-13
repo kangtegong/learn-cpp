@@ -1,0 +1,340 @@
+이번 강의 정말정말중요함
+
+const가 클래스와 함께 사용될 때
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	int m_value = 0;
+
+	void setValue(int value) { m_value = value; }
+	int getValue() { return m_value; }
+};
+
+int main()
+{
+	Something sth;
+	// const Something sth;
+	// 이렇게 const로 선언하면 setValue, getValue 모두에서 오류가 난다
+	// getValue조차도 에러가 난다
+	// 컴파일러가 판단할 때는 멤버 변수가 바뀌었냐 바뀌지 않았냐가 아니라
+	// 멤버 함수가 const냐 아니냐로 판단한다
+	
+	sth.setValue(3);
+	cout << sth.getValue() << endl;
+
+}
+```
+
+멤버함수를 const로 써주기
+
+나중에 코딩할 때 const를 쓸 수 있는 곳은 모조리 쓰는게 좋다
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	int m_value = 0;
+
+	// member function이 const다 === 이 멤버함수에서는 멤버변수를 바뀌지 않는다
+	int getValue() const
+	{ 
+		return m_value; 
+	}
+
+	//	void setValue(int value) const	 이건 const가 될 수가 없다
+	void setValue(int value)
+	{
+		m_value = value;
+	}
+
+
+};
+
+int main()
+{
+	const Something sth;
+	
+	// sth.setValue(3);
+	// class를 const로 선언했으면 setValue는 불가
+	cout << sth.getValue() << endl;
+
+}
+```
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	int m_value = 0;
+
+	Something() {
+		cout << "Constructor called" << endl;
+	}
+
+	int getValue() const
+	{ 
+		return m_value; 
+	}
+
+	void setValue(int value)
+	{
+		m_value = value;
+	}
+
+};
+
+void print(Something sth)
+{
+	// 여기서 찍은 주소와
+	cout << &sth << endl;
+	cout << sth.m_value << endl;
+}
+
+
+int main()
+{
+	Something sth;
+	
+	// 여기서 찍은 주소가 다르게 나온다
+	cout << &sth << endl;
+	
+	// 근데 constructor는 한 번만 호출된다
+	print(sth);
+	
+	return 0;
+
+}
+```
+
+```
+Constructor called
+0113F770
+0113F69C
+```
+
+분명 인자로 넘기는 값은 복사가 되는 거라고 했는데,
+왜 constructor는 한 번밖에 호출이 안되는 걸까?
+
+print에 들어온 인자가 복사되어 초기화되는 건 맞다
+근데 constructor가 한 번밖에 호출되지 않는 이유는,
+
+Something 안에 복사 생성자 (copy constructor)라고 하는게 숨어있기 때문이다
+
+말하자면 이런 게 숨어있는 셈
+
+```
+public:
+	int m_value = 0;
+	Something(const Something& sth_in)
+	{
+		m_value = sth_n.m_value;
+	}
+```
+
+직접 복사생성자를 정의해서 호출해보자
+(강의에서는 디버거로 찍어보는데 직접 디버거 찍어보기)
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	int m_value = 0;
+
+	Something() {
+		cout << "Constructor called" << endl;
+	}
+
+	// copy constructor
+	Something(const Something& sth_in)
+	{
+		cout << "Copy Constructor Call" << endl;
+		m_value = sth_in.m_value;
+	}
+
+
+	int getValue() const
+	{ 
+		return m_value; 
+	}
+
+	void setValue(int value)
+	{
+		m_value = value;
+	}
+
+};
+
+void print(Something sth)
+{
+	// 여기서 찍은 주소와
+	cout << &sth << endl;
+	cout << sth.m_value << endl;
+}
+
+
+int main()
+{
+	Something sth;
+	
+	// 여기서 찍은 주소가 다르게 나온다
+	cout << &sth << endl;
+	
+	// 근데 constructor는 한 번만 호출된다
+	print(sth);
+	
+	return 0;
+
+}
+```
+
+결과
+
+```
+Constructor called
+008FFEBC
+Copy Constructor Call
+008FFDDC
+0
+```
+
+이로서 파라미터로 받아온 값은 원본이 아닌 사본, 
+즉 복사된 값이라는 걸 입증할 수 있다!
+
+
+
+그럼 만약 복사하지 않고 그대로 받아오는 방법
+즉, 진짜 대상 그 자체를 받아오는 방법은?
+
+const reference!
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+public:
+	int m_value = 0;
+
+	Something() {
+		cout << "Constructor called" << endl;
+	}
+
+	// copy constructor
+	Something(const Something& sth_in)
+	{
+		cout << "Copy Constructor Call" << endl;
+		m_value = sth_in.m_value;
+	}
+
+
+	int getValue() const
+	{ 
+		return m_value; 
+	}
+
+	void setValue(int value)
+	{
+		m_value = value;
+	}
+
+};
+
+void print(const Something &sth)
+{
+	cout << &sth << endl;
+	cout << sth.getValue() << endl;
+}
+
+
+int main()
+{
+	Something sth;
+	
+	// 여기서 찍은 주소가 다르게 나온다
+	cout << &sth << endl;
+	
+	// 근데 constructor는 한 번만 호출된다
+	print(sth);
+	
+	return 0;
+
+}
+```
+
+결과
+
+```
+Constructor called
+00FEFC4C
+00FEFC4C
+0
+```
+
+
+추가
+
+const가 있냐 없냐를 기준으로 오버로딩을 할 수도 있다
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Something
+{
+public:
+	string m_value = "default";
+
+	// getValue 두 개를 만들어보자
+	// 둘 다 reference 리턴
+	// 하나는 const, 하나는 const 아닌 걸루
+
+	// member function도 const, 리턴 타입도 const
+	const string& getValue() const 
+	{ 
+		cout << "const version getValue" << endl;
+		return m_value; 
+	}
+	
+	string& getValue() 
+	{ 
+		cout << "non-const version getValue" << endl;
+		return m_value;
+	}
+
+};
+
+int main()
+{
+	Something sth;
+	sth.getValue();		// "non-const version getValue"
+
+	const Something sth2;
+	sth2.getValue();		// "const version getValue"
+	
+	return 0;
+
+}
+```
+
+정리
+
+인스턴스가 const
+멤버 function이 const
+레퍼런스 보낼 때 const 보낸 것과 보내지 않은 것의 차이
+copy constructor

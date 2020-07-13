@@ -1,0 +1,108 @@
+영역 제한 열거형 (열거형 클래스)
+Scoped Enumerations
+(Enum Class)
+
+참고로 Enum struct도 있음
+
+```
+#include <iostream>
+
+
+int main() 
+{
+	using namespace std;
+
+	enum Color
+	{
+		RED,
+		BLUE,
+	};
+
+	enum Fruit
+	{
+		BANANA,
+		APPLE,
+	};
+
+	Color color = RED;
+	Fruit fruit = BANANA;
+
+	if (color == fruit)
+		cout << "Color is Fruit?" << endl;
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+
+
+int main() 
+{
+	using namespace std;
+
+	//enum Color
+	enum class Color
+	{
+		RED,
+		BLUE,
+	};
+
+	// enum Fruit
+	enum class Fruit
+	{
+		BANANA,
+		APPLE,
+	};
+
+	//Color color = RED;
+	//Fruit fruit = BANANA;
+	Color color = Color::RED;
+	Fruit fruit = Fruit::BANANA;
+
+	/*
+	if (color == fruit)
+		cout << "Color is Fruit?" << endl;
+	*/
+	return 0;
+}
+```
+
+```
+#include <iostream>
+
+
+int main() 
+{
+	using namespace std;
+
+	//enum Color
+	enum class Color
+	{
+		RED,
+		BLUE,
+	};
+
+	// enum Fruit
+	enum class Fruit
+	{
+		BANANA,
+		APPLE,
+	};
+
+	//Color color = RED;
+	//Fruit fruit = BANANA;
+	Color color = Color::RED;
+	Color color2 = Color::BLUE;
+	Fruit fruit = Fruit::BANANA;
+
+	if (color == color2)
+		cout << "same color" << endl;
+	/*
+	if (color == fruit)
+		cout << "Color is Fruit?" << endl;
+	*/
+	return 0;
+}
+```

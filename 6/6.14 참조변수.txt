@@ -1,0 +1,228 @@
+특정한 경우 포인터보다 더 쉽게 사용할 수 잇는 참조 변수
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+
+	int value = 5;
+
+	// 참조 변수 선언
+	int &ref = value;
+	// 내부적으로 ref가 value와 같은 variable처럼 작동한다
+
+	cout << ref << endl;
+
+	ref = 10;
+
+	cout << value << " " << ref << endl;		// 10 10
+	// value의 값도 덩달아 10으로 변함
+
+	// value의 또다른 이름(별명)처럼 사용가능
+
+
+	return 0;
+}
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+
+	int value = 5;
+	int *ptr = &value;
+
+	// 참조 변수 선언
+	int &ref = value;
+	
+	// 전부 같은 주소 나온다! 
+	cout << &value << endl;
+	cout << &ref << endl;		// 얘도 같은 주소 나온다!! value의 주소 공유
+	cout << ptr << endl;
+
+	return 0;
+}
+```
+
+
+reference의 특징
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+
+	int value = 5;
+
+	// ref는 반드시 초기화되어야 한다
+	// int &ref; 이러면 안됨
+	int &ref = value;
+
+	const int y = 8;
+	// int &ref = y;
+	// const는 ref 안된다. ref 에서 마음대로변수를 바꿀 수도 있기 때문
+	
+	const int &ref = y;
+	// const를 붙이면 당연히 참조 가능!
+
+
+	return 0;
+}
+
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value1 = 5;
+	int value2 = 10;
+
+	int &ref1 = value1;
+
+	cout << ref1 << endl;
+
+	// ref의 reassign 가능
+	ref1 = value2;
+
+
+	return 0;
+}
+```
+
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int n)
+{
+	n = 10;
+	cout << "In doSomething: " << n << endl;
+}
+
+int main()
+{
+	int n = 5;
+	cout << n << endl;		// 5
+	doSomething(n);			// 10
+	cout << n << endl;		// 5
+
+	return 0;
+}
+
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int &n)	// 이번에는 참조변수로 인자 받아보자
+{
+	n = 10;
+	cout << &n << endl;	// n의 주소값 : main함수의 n 주소값과 동일
+	cout << "In doSomething: " << n << endl;
+}
+
+int main()
+{
+	int n = 5;
+	cout << &n << endl;	// n의 주소값 : doSomething안의 n의 주소값과 동일
+	cout << n << endl;		// 5
+	doSomething(n);		// 10
+	cout << n << endl;		// 10
+
+	return 0;
+}
+
+```
+
+포인터를 넘길 때와의 차이
+
+포인터는 우리가 넘겨주고자 하는 변수의 주소를 복사해서 넘겨주는 것
+근데 레퍼런스를 쓰게 되면 아예 변수 자체가 넘어감
+그리고 퍼포먼스 측면에서도 (복사의 과정이 없으니)레퍼런스가 더 나음
+
+
+
+
+때론 doSomething에 n값이 doSomething에 들어는 가는데,
+doSomething이 n값을 못바꾸게 만들고 싶을 때가 있음
+(요즘 추세이기도 한 프로그래밍 방식)
+
+단순히 인자로 const 넣어주면 됨
+
+```
+void doSomething(const int &n)	
+{
+	// n = 10;		// const로 받아왔으니 값 변경 안됨 
+	cout << &n << endl;	
+	cout << "In doSomething: " << n << endl;
+}
+```
+
+
+레퍼런스의 유용한 점 : struct에서의 멤버 
+
+```
+
+#include <iostream>
+
+using namespace std;
+
+struct Something
+{
+	int v1;
+	float v2;
+};
+
+struct Other
+{
+	Something st;
+};
+
+int main()
+{
+	Other ot;		// 여기서 v1에 접근하려면?
+	ot.st.v1 = 1.0;	// 이렇게 길어짐
+
+	// 이 떄 레퍼런스를 쓰면 유용함
+	int &v1 = ot.st.v1;
+
+	return 0;
+}
+
+```
+
+포인터와 참조 비교
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value = 5;
+	int *const ptr = &value;	// 얘랑
+	int &ref = value;			// 얘가 사실상 기능상으로는 동일함
+
+	return 0;
+}
+
+```

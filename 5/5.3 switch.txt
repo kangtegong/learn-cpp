@@ -1,0 +1,83 @@
+```
+#include <iostream>
+
+using namespace std;
+
+enum class Colors
+{
+	BLACK,
+	WHITE,
+	RED,
+	GREEN,
+	BLUE,
+};
+
+void printColorName(Colors color)
+{
+	//if (color == Colors::BLACK)
+	//	cout << "Black" << endl;
+	//else if (color == Colors::WHITE)
+	//	cout << "White" << endl;
+	// 이렇게 일일이 if if else로 작성하는건 번거로움
+
+	switch (color)
+	{
+	case Colors::BLACK :
+	//여기서 case 0 : 이렇게 쓰는건 안됨.
+	//쓰고 싶으면 switch (color)가 아니라 switch (static_cast<int>(color) 라고 줄써야 한다
+		cout << "Black" << endl;
+		break;
+	}
+	default: 
+	// case가 정의되지 않은 모든 경우에 대해서는 default에서 실행됨
+	// default에는 break가 있을 필요 없음		
+}
+
+int main() 
+{
+	printColorName(Colors::BLACK);
+
+	return 0;
+}
+```
+
+여기서 주의사항 : switch 안에서의 변수 선언
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main() 
+{
+	int x;
+	cin >> x;
+
+	switch (x)
+	{
+		// switch 안에서 변수 선언은 할 수 있지만
+		int a;
+		// 이렇게 할당은 불가능 하다
+		// 값을 넣어주는 건 case문 다음부터 가능하다
+		int b = 5;
+		
+	case 0:
+		break;
+	}
+
+	return 0;
+}
+```
+
+주의사항2 : case 안에서의 변수 선언
+
+조금 복잡한 얘기 하는데 이렇게 쓸 일이 없다고 하시니..
+
+---
+
+블럭으로 변수의 유효 범위를 나타내는거 좀 익숙하지 않은데
+이걸 당연히 여기면서 코딩을 하네..
+
+변수를 사용할 때는 적은 범위에서만 사용하기
+그리고 사용된 후에는 바로 os에 반납하도록 하기
+

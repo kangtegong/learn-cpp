@@ -1,0 +1,29 @@
+
+1. 중단 halt
+2. 점프 jump	goto break continue
+3. 조건분기 condition	if switch
+4. 반복 loops		while, do while, for
+5. 예외처리	try, catch, throw
+
+
+
+--- 
+
+중단
+
+```
+#include <iostream>
+#include <cstdlib>		// exit 쓰기 위해
+
+using namespace std;
+\
+int main() 
+{
+	cout << "I love you" << endl;
+	// exit(0);		// 긴급한 강제종료. 무조건 여기서 종료해야 할 때, 디버깅할 때 
+					// OS에게 1이라는 이 코드를 주는 것
+					// exit(1); exit(-1);
+	// return 0;	// return type에 맞게 return 해주지 않으면 에러.
+ 	return 0;
+}
+```

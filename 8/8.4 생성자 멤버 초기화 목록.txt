@@ -1,0 +1,149 @@
+생성자의 멤버들을 초기화할 떄 사용하는 initializer list
+보통은 '멤버 초기화 리스트', 또는 '멤버 초기자 리스트'로 번역된다
+
+```
+#include <iostream>
+using namespace std;
+
+class Something
+{
+private:
+	int m_i;
+	double m_d;
+	char m_c;
+
+// initializer list로 초기화해보자
+public:
+	Something()
+		: m_i(1), m_d(3.14), m_c('a')
+		// 	: m_i{1}, m_d{3.14}, m_c{'a'}
+		// 이렇게 해도 되긴 하는데 이러면 형 변환 안됨. 조금 더 엄격함
+	{
+
+	}
+
+	void print()
+	{
+		cout << " " << m_i << " " << m_d << " " << m_c << endl;
+	}
+
+};
+
+int main()
+{
+
+	Something sth;
+	return 0;
+}
+```
+
+
+C++11부터는 array도 초기화 가능함
+
+```
+class Something
+{
+private:
+	int m_i;
+	double m_d;
+	char m_c;
+	int m_arr[5];
+
+public:
+	Something()
+		: m_i(1), m_d(3.14), m_c('a'), m_arr{ 1, 2, 3, 4, 5 }
+	{
+
+	}
+
+	void print()
+	{
+		cout << " " << m_i << " " << m_d << " " << m_c << endl;
+		for(auto& e: m_arr
+			cout << e < " ";
+		cout << endl;
+	}
+
+};
+
+```
+
+
+다른 클래스의 멤버를 멤버 초기화로 초기화할 수 있다.
+(디버거로 확인해보기)
+
+```
+#include <iostream>
+using namespace std;
+
+class B
+{
+private:
+	int m_b;
+
+public:
+	B(const int& m_b_in)
+	{}
+};
+
+class Something
+{
+private:
+	int m_i;
+	double m_d;
+	char m_c;
+	int m_arr[5];
+	B m_b;
+
+public:
+	Something()
+		: m_i(1), m_d(3.14), m_c('a'), m_arr{ 1, 2, 3, 4, 5 }, m_b(m_i -1)
+	{
+
+	}
+
+	void print()
+	{
+		cout << " " << m_i << " " << m_d << " " << m_c << endl;
+	}
+
+};
+
+int main()
+{
+
+	Something sth;
+	return 0;
+}
+```
+
+생성자와 멤버 변수 직접 초기화한 값이 다를 경우, 어디가 우선일까?
+
+생성자의 우선순위가 더 높다!
+
+```
+class Something
+{
+private:
+	int m_i = 100;
+	double m_d = 100.0;
+	char m_c = 'F' ;
+	int m_arr[5] = { 1, 2, 3, 4, 5 };
+	B m_b{ 1024 };
+
+public:
+	Something()
+		: m_i(1), m_d(3.14), m_c('a'), m_arr{ 1, 2, 3, 4, 5 }, m_b(m_i -1)
+	{
+
+	}
+
+	void print()
+	{
+		// 1 3.14 a
+		cout << " " << m_i << " " << m_d << " " << m_c << endl;
+	}
+
+};
+
+```

@@ -1,0 +1,71 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value = 7;		// double, shrot로 한 경우
+	int *ptr = &value;	// doube *, short *로 한 경우
+
+	cout << ptr << endl; // 0133F738
+	//int type으로 cast하기 위해서 (int)하는 법도 있지만 아래의 방법도 있다
+	// unsigned integer pointer type
+	cout << uintptr_t(ptr) << endl;		// 20182840
+	cout << uintptr_t(ptr + 1) << endl;		// 20182844
+	cout << uintptr_t(ptr + 2) << endl;		// 20182848
+	
+	int array[] = { 9, 7, 5, 3, 1 };
+
+	cout << array[0] << " " << (uintptr_t)&array[0] << endl;
+	cout << array[1] << " " << (uintptr_t)&array[1] << endl;
+	cout << array[2] << " " << (uintptr_t)&array[2] << endl;
+	cout << array[3] << " " << (uintptr_t)&array[3] << endl;
+
+	/*
+	9 7338568
+	7 7338572
+	5 7338576
+	3 7338580
+	*/
+
+	int *ptr2 = array;
+
+	for (int i = 0; i < 5; ++i)
+	{
+		cout << *(ptr2 + i) << (uintptr_t)(ptr2 + i) << endl;
+	}
+
+	/*
+	98911992
+	78911996
+	58912000
+	38912004
+	18912008
+	*/
+
+	return 0;
+}
+```
+
+문자열
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	char name[] = "Jack Jack";
+	const int n_name = sizeof(name) / sizeof(char);
+
+	for (int i = 0; i < n_name; ++i)
+	{
+		cout << *(name + i);	// 널 문자까지 풀력!
+	}
+
+	return 0;
+}
+
+```

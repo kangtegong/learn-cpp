@@ -1,0 +1,129 @@
+컴퓨터는 숫자는 명확하게 구분할 수 있지만
+사람들은 숫자들은 모두 명확하게 구분하기 어려울 때가 있음
+그래서 비슷한 유형의 다양한 옵션들을 기호적으로 표현하기 위해 생겨난게 열거형
+
+```
+#include <iostream>
+#include <typeinfo>
+using namespace std;
+
+// 열거형도 일종의 user-defined data type이다
+enum Color
+{
+	COLOR_BLACK,
+	COLOR_RED,
+	COLOR_BLUE,
+	COLOR_GREEN,
+};	// 여기 ; 꼭 쓰기
+
+int main() 
+{
+	
+	// Color를 data type처럼 쓰기
+	Color paint = COLOR_BLACK;
+	Color house(COLOR_BLACK);;
+	Color apple{ COLOR_RED };
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+#include <typeinfo>
+using namespace std;
+
+// 열거형도 일종의 user-defined data type이다
+enum Color
+{
+	COLOR_BLACK,
+	COLOR_RED,
+	COLOR_BLUE,
+	COLOR_GREEN,
+};	// 여기 ; 꼭 쓰기
+
+enum Feeling
+{
+	FEELING_BLUE,
+	FEELING_JOY,
+	// 참고로 여기서 다른 enum  (예를 들어 Color)속 요소와 동일한 이름(예를 들어 COLOR_GREEN(으로 
+	// 요소를 선언하면 에러가 난다.
+	// 이런걸 해결해주는게 C++17의 enum class
+};
+
+int main() 
+{
+	
+	// Color를 data type처럼 쓰기
+	Color paint = COLOR_BLACK;
+	Color house(COLOR_BLACK);;
+	Color apple{ COLOR_RED };
+
+	// enum의 값은 0부터 차례로 배정된다
+	Color my_color = COLOR_BLACK;
+	cout << my_color << endl;		// 0
+
+	return 0;
+}
+```
+
+
+
+```
+#include <iostream>
+#include <typeinfo>
+#include <string>
+using namespace std;
+
+// 열거형도 일종의 user-defined data type이다
+// 보통 헤더파일에 include 해서 사용을 많이 함
+enum Color
+{
+	COLOR_BLACK,
+	COLOR_RED,
+	COLOR_BLUE,
+	COLOR_GREEN,
+};	// 여기 ; 꼭 쓰기
+
+enum Feeling
+{
+	FEELING_BLUE,
+	FEELING_JOY,
+	// 참고로 여기서 다른 enum  (예를 들어 Color)속 요소와 동일한 이름(예를 들어 COLOR_GREEN(으로 
+	// 요소를 선언하면 에러가 난다.
+	// 이런걸 해결해주는게 C++17의 enum class
+};
+
+int main() 
+{
+	
+	// Color를 data type처럼 쓰기
+	Color paint = COLOR_BLACK;
+	Color house(COLOR_BLACK);;
+	Color apple{ COLOR_RED };
+
+	// enum의 값은 0부터 차례로 배정된다
+	Color my_color = COLOR_BLACK;
+	cout << my_color << endl;		// 0
+
+	// but, enum 타입에 강제로 숫자를 대입하는건 안된다
+	// Color my_color = 1;	// 이러면 에러난다.
+
+	// 그래도 casting은 된다
+	Color my_color = static_cast<Color>(3);
+
+	// cin으로 직접 입력받는 것도 안된다.
+	// cin >> my_color;
+
+	// 우회해서 입력받기
+	int in_number;
+	cin >> in_number;
+
+	if (in_number == static_cast<Color>(0))
+		my_color = static_cast<Color>(0);
+	// ...
+
+
+	return 0;
+}
+```

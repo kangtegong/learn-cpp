@@ -1,0 +1,35 @@
+type alias
+
+
+```
+#include <iostream>
+#include <vector>
+#include <cstdint>
+
+int main() 
+{
+	// 프로그래밍 편의를 위해 double을 distance_t로 사용
+	typedef double distance_t;
+
+	std::int8_t i(97);
+
+	double		my_distance;
+	distance_t	home2work;
+	distance_t	home2school;
+
+	std::vector<std::pair<std::string, int>> pairlist;
+	// using namespace std;
+	// vector<pair<string, int> > pairlist
+	// vector<pair<string, int> > 이것 자체가 자료형인 셈
+	
+	// 이렇게 복잡한 자료형에 대해서 매번 이렇게 코딩하지 말고 이름을 붙이기
+	// typedef vector<pair<string, int> > pairlist_t;
+	// pairlist_t pairlist1;
+	// pairlist_t pairlist2;
+
+	// typedef 말고 혹은 using을 사용할 수도 있음
+	// using pairlist_t = vector<pair<string, int> >;
+
+	return 0;
+}
+```

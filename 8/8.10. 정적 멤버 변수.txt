@@ -1,0 +1,170 @@
+정적 멤버 변수(static)
+
+const랑 static이랑 왤케 헷갈리냐
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+int generateID()
+{
+	static int s_id = 0;
+	return ++s_id;
+}
+
+class Something
+{
+public:
+	int m_value = 1;
+
+};
+
+int main()
+{
+	cout << generateID() << endl;	// 1
+	cout << generateID() << endl;	// 2
+	cout << generateID() << endl;	// 3
+
+	Something sth1;
+	Something sth2;
+
+	sth1.m_value = 2;
+
+	cout << &sth1.m_value << " " << sth1.m_value << endl;		// 006FF7C8 2
+	cout << &sth2.m_value << " " << sth2.m_value << endl;		// 006FF7BC 1
+
+	return 0;
+
+}
+```
+
+이번엔 something의 멤버변수를 static으로 바꾸어보자
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Something
+{
+public:
+	//이번엔 something의 멤버변수를 static으로 바꾸어보자
+	// static 멤버변수는 initialize를 할 수 없으므로 
+	// static int m_value = 1; 이렇게 쓰면 에러가 난다
+	static int m_value;
+};
+
+// 이런 식으로 초기화해주어야 한다
+// 이 부분 이해 안가는데 왜 이렇게 해야하는 거지 (extern 중복 선언 부분 참고)
+int Something::m_value = 1;
+
+int main()
+{
+
+	Something sth1;
+	Something sth2;
+
+	sth1.m_value = 2;
+
+	// 놀랍게도 주소가 같이 찍힌다
+	cout << &sth1.m_value << " " << sth1.m_value << endl;		// 00380000 2
+	cout << &sth2.m_value << " " << sth2.m_value << endl;		// 00380000 2
+
+	return 0;
+
+}
+```
+
+
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Something
+{
+public:
+	static int m_value;
+};
+
+int Something::m_value = 1;
+
+int main()
+{
+
+	// 더 재미있는 건 인스턴스 할당을 안해줘도 static으로 선언되었기 때문에
+	// 주소가 할당된다
+
+	cout << &Something::m_value << " " << Something::m_value << endl; // 00E60000 1
+
+	Something sth1;
+	Something sth2;
+
+	sth1.m_value = 2;
+
+	cout << &sth1.m_value << " " << sth1.m_value << endl;		// 00E60000 2
+	cout << &sth2.m_value << " " << sth2.m_value << endl;		// 00E60000 2
+
+	// 또 문법 상 이렇게도 변수값 변경이 가능하다
+
+	Something::m_value = 1024;
+	cout << &Something::m_value << " " << Something::m_value << endl;  // 00E60000 1024
+
+
+	return 0;
+
+}
+
+```
+
+참고로 static 멤버의 경우엔 header로 따로 뺄 수 없다.
+
+```
+int Something::m_value = 1;	// define in cpp file
+```
+
+cpp파일 안에 함께 들어있어야 함
+
+
+
+
+
+staic이면서 const인 경우
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Something
+{
+public:
+	// static const의 경우에는 여기서 반드시 초기화해주어야 한다
+	static const int m_value = 1;
+	// 컴파일타임에 이 값이 확실히 결정되어야 하는 경우 constexpr를 써도 된다
+	// static constexpr int m_value = 1;
+
+};
+
+// static const이기때문에 이번엔 여기서 초기화가 안됨
+// int Something::m_value = 1;
+
+int main()
+{
+
+	cout << &Something::m_value << " " << Something::m_value << endl; // 00E60000 1
+
+	Something sth1;
+	Something sth2;
+
+	cout << &sth1.m_value << " " << sth1.m_value << endl;		// 00E60000 2
+	cout << &sth2.m_value << " " << sth2.m_value << endl;		// 00E60000 2
+
+
+	return 0;
+
+}
+
+```

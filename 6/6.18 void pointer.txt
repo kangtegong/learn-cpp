@@ -1,0 +1,76 @@
+포인터는 주소다
+메모리가 크던 작던 메모리의 주소자체는 규격화되어있다
+
+그렇다면 자료형에 상관없이 포인터를 저장할 수 있지 않을까?
+
+하는 생각에서 만들어진 포인터
+
+void 포인터는 generic(=포괄적인) pointer라고도 부른다
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int i = 5;
+	float f = 3.0;
+	char c = 'a';
+
+	void *ptr = nullptr;
+
+	// 모두 문제가 없다
+	ptr = &i;
+	ptr = &f;
+	ptr = &c;
+
+	// 문제는 void 포인터타입에 주소를 답으면 담긴 주소가 어던 자료형인지 모르니까
+	// 포인터 연산이 사용불가
+	// cout << ptr + 1 << endl;			이런거 불가
+
+	// 그럼 주소값 자체는 잘 찍힐까?
+	cout << &c << " " << ptr << endl;  // a儆儆儆儆 0099FA0F
+	cout << &f << " " << ptr << endl;  // 012FF78C 012FF783
+
+	// 또 어떤 타입인지를 모르니까 de referencing도 안됨
+	// cout << *ptr << endl;		이런거 불가
+	// 하려면 casting을 해야함
+	cout << *static_cast<float*>(ptr) << endl;
+
+	// 다형성을 구현하다보면 이런 식으로 정의해야하는 경우가 간혹 있다
+
+	return 0;
+}
+
+```
+
+void 포인터를 casting하는 경우
+
+```
+#include <iostream>
+
+using namespace std;
+
+enum Type
+{
+	INT,
+	FLOAT,
+};
+
+int main()
+{
+	void *ptr = nullptr;
+	Type type = FLOAT;
+
+	if (type == FLOAT)
+		cout << *static_cast<float*>(ptr) << endl;
+	if (type == INT)
+		cout << *static_cast<int*>(ptr) << endl;
+
+
+	return 0;
+}
+
+```

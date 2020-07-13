@@ -1,0 +1,79 @@
+while문 안에서 변수를 선언하고 싶을 때
+
+```
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main() 
+{
+	while (1)
+	{
+		static int cnt = 0;
+		// int cnt=0;로 선언하면 매번 새로 int cnt = 0;으로 선언됨
+		cout << cnt << endl;
+		++cnt;
+
+	}
+	return 0;
+}
+```
+
+unsigned int를 counter로 사용하면 overflow가 생길 수 있다
+
+```
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main() 
+{
+
+	unsigned int count = 10;
+
+	while (count >= 0)
+	{
+		if (count >= 0)
+		{
+			if (count == 0) cout << "Zero";
+			else cout << count << " ";		// overflow 무한루프
+
+			count--;
+		 }
+	}
+	return 0;
+}
+```
+
+1
+1 2
+1 2 3
+1 2 3 4
+1 2 3 4 5
+
+```
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main() 
+{
+	int count_outer = 1;
+
+	while (count_outer <= 5)
+	{
+		int inner_count = 1;
+		while (inner_count <= count_outer)
+		{
+			cout << inner_count++ << " ";
+		}
+		cout << endl;
+		++count_outer;
+	}
+	
+	return 0;
+}
+```

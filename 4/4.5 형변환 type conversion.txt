@@ -1,0 +1,78 @@
+typeinfo와 typeid
+
+```
+#include<iostream>
+#include<typeinfo> // 자료형 확인하는 데에 유용한 헤더
+
+using namespace std;
+
+int main() 
+{
+	int a = 123;
+	cout << typeid(a).name() << endl;	// int
+	return 0;
+}
+```
+
+두 가지 형변환 : 암시적, 명시적
+
+암시적 형변환 - 형변환 요청을 안했는데 컴파일러가 알아서 형변환
+
+```
+int a = 123.0;
+cout << typeid(a).name() << endl; 
+```
+
+자료형 변환에도 규칙이 있음. 
+
+
+
+암시적 형변환
+
+1. 작은 것을 큰 것으로 : numeric promotion
+
+flooat a = 1.0f;
+double d = a;
+
+
+2. 큰 것에서 작은 것으로 (혹은 type이 바뀌는 경우) : numeric conversion
+
+double d = 3;	// int -> double
+short s = 2;	// int ->  short
+
+
+int i = 300000;
+char c = i;
+
+cout << static_cast<int>(c) << end;	// 전혀 엉뚱한 48이 나옴
+
+
+
+정밀도가 높은 숫자를 낮은 숫자로 바꾸어보자 
+
+double d = 0.123456789;
+float = f = d;
+
+cout << std::setprecision(12) << f << endl;	// 0.123456789103 마냥 정확한 숫자는 안나옴
+
+
+
+float를 int로 변환하면? 소수점부분을 버린다
+
+
+
+또하나 주의해야 하는 점 : unsigned
+
+// 5 - 10을 했으면 -5가 나와야하는데 기괴한 숫자가 나옴. 왜냐면 unsigned가 끼어있는 계산은 unsigned에 넣으려 하기 때문
+// 이 형변환도 우선순위가 있음  : int, unsigned int (int보다 unsigned보다 우선순위 높음), long, unsigned long, longlong, unsigned longlong, float, double, long double
+cout << 5u- 10 << endl;
+
+
+
+
+명시적 형변환
+
+int i = 4.0;	// double 4.0이 암시적 형변환이 됨
+int i = int(4.0);	// cpp style casting
+int i = (int)4.0;	// c style casting
+int i = static_cast<int>(4.0);	// static cast

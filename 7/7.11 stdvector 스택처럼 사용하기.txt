@@ -1,0 +1,212 @@
+동적할당 메모리를 직접 관리하는 것 보다 
+std::vector를 쓰는게 훨씬 낫다
+
+
+벡터에는 size와 capacity라는 두 개념이 있다
+
+실제 코드에서 갖고있는 메모리가 capacity
+그 중에서 사용하는 게 size
+
+벡터를 잘 쓰는 방법은 내부적으로 호출되는 new, delete이
+어떻게 하면 적게 호출될지 생각하며 쓰는 것
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	// int *v_ptr = new int[3]{1, 2, 3};
+	// 이것과 내부적으로는 비슷하게 작용
+	std::vector<int> v{ 1,2,3 };
+
+	for (auto &e : v)
+		cout << e << " ";		// 1 2 3
+	cout << endl;		
+
+	cout << v.size() << endl;		// 3
+
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	std::vector<int> v{ 1,2,3 };
+
+	v.resize(10);
+
+	for (auto &e : v)
+		cout << e << " ";		// 1 2 3 0 0 0 0 0 0 0 
+	cout << endl;		
+
+	cout << v.size() << " " << v.capacity << endl;		// 10 10
+
+
+	return 0;
+}
+```
+
+이번에는 더 작은 수로 resize
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	std::vector<int> v{ 1,2,3 };
+
+	v.resize(2);
+
+	for (auto &e : v)
+		cout << e << " ";		// 1 2 
+	cout << endl;		
+
+	cout << v.size() << " " << v.capacity << endl;		// 2 3
+
+
+	return 0;
+}
+
+```
+
+
+vector의 내부 동작
+
+더 작은 크기로 리사이징 할 때 
+capacity는 그대로, size만 줄인다
+
+즉, 새롭게 메모리를 할당하고 기존의 데이터를 지우는 과정 없이
+그냥 데이터 몇 개 없는 척 한다.
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	std::vector<int> v{ 1,2,3 };
+
+	v.resize(2);
+
+	for (auto &e : v)
+		cout << e << " ";		// 1 2 
+	cout << endl;		
+
+	cout << v.size() << " " << v.capacity << endl;		// 2 3
+
+	// 세 번째 인덱스의 3이라는 수 강제로 가지고 오기
+	int *ptr = v.data();			// v는 아직 3이라는 세번쩨 인덱스를 갖고 있다.
+	cout << ptr[2] << endl;		// 3
+
+	return 0;
+}
+```
+
+그럼 이번에 reserve를 이용해서 
+capacity만 강제로 키워보자
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	std::vector<int> v{ 1,2,3 };
+
+	// 메모리 용량을 미리 확보해두겠다
+	v.reserve(1024);
+
+	for (auto &e : v)
+		cout << e << " ";		// 1 2 
+	cout << endl;		
+
+	cout << v.size() << " " << v.capacity() << endl;		// 2 1024
+
+	int *ptr = v.data();
+	cout << ptr[2] << endl;		// 3
+
+	return 0;
+}
+```
+
+reserve 해두면 새로 메모리를 할당하고 바꾸고 하는 과정이 없다
+그래서 더 빨라질 수 있다.
+
+
+
+
+vector 스택처럼 사용하기
+
+재귀호출을 할 때 stack overflow가 날 수 있는데
+그럴 때 아래처럼 vector를 사용하곤 한다
+
+vector로 reserve 해두면
+push, pop에서 new, delete할 필요 없어서 더 빠르다
+
+단점은 reserve를 너무 크게 잡으면 메모리 낭비가 될 수 있다.
+
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void printStack(const std::vector<int> &stack)
+{
+	for (auto &e : stack)
+		cout << e << " ";
+	cout << endl;
+}
+
+int main()
+{
+	std::vector<int> stack;
+
+	stack.push_back(3);
+	printStack(stack);
+
+	stack.push_back(5);
+	printStack(stack);
+
+	stack.push_back(7);
+	printStack(stack);
+
+	stack.pop_back();
+	printStack(stack);
+
+	stack.pop_back();
+	printStack(stack);
+
+	stack.pop_back();
+	printStack(stack);
+
+	/*
+	3
+	3 5
+	3 5 7
+	3 5
+	3
+	*/
+
+	return 0;
+}
+
+```
+

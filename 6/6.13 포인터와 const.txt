@@ -1,0 +1,143 @@
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value = 5;
+	int *ptr = &value;
+	*ptr = 6;
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	const int value = 5;		// 가리키고 싶은 변수가 const라면
+	const int *ptr = &value;	// 가리키는 포인터도 const여야 함
+	// *ptr = 6;				// 그리고 이 경우 de-referencing 해서 assignment하는 건  안됨
+
+	cout << *ptr << endl;		// 출력은 가능. 역참조해서 assignment가 안되는 거
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value = 5;			// value가 const는 아닌데 포인터는 const인 경우
+	const int *ptr = &value;	// 포인터가 가리키고 있는 주소를 바꾸기 않겠다
+	value = 6;			// 이건 가능
+
+	cout << *ptr << endl;		// 6
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value1 = 5;
+	const int *ptr = &value1;
+
+	int value2 = 6;
+	ptr = &value2;	// 이거 된다!
+
+	// 이거 헷갈리지 말자
+	// const int * 는 내가 가리키고 있는 주소에 있는 값을 안바꾸겠다는 의미이지
+	// ptr에 담긴 주소값을 안바꾸겠다는 의미는 아니다
+
+	// 즉, const int *ptr = &value1 을 했으면 *ptr = 7; 이런 역참조를 통한 값 변경이 안된다는거지
+	// 다른 주소를 ptr에 담을 수는 있다
+
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	// 포인터 자체가 상수인 경우
+	
+	int value = 5;
+	int *const ptr = &value;	// ptr이 담고 있는 변수를 바꾸지 못함
+
+	cout << *ptr << endl;	// 역참조 가능
+	*ptr = 10;				// 역참조해서 값 변경 가능
+
+	int value2 = 8;
+	// ptr = &value2;		// 이게 안됨. ptr이 담고 있는 변수를 바꾸지 못함
+	
+	return 0;
+}
+
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int value = 5;
+	int value2 = 6;
+
+	// const int *const ptr;		// ptr 자체가 상수라서 반드시 초기화해주어야 한다
+
+	const int *const ptr = &value;
+
+	// ptr = &value2			// 값 변경 불가
+
+
+	return 0;
+}
+
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+
+	// 정리
+	int value = 5;
+	const int *ptr1 = &value;
+	int *const ptr2 = &value;
+	const int *const ptr3 = &value;
+
+	return 0;
+}
+
+```

@@ -1,0 +1,181 @@
+함수가 수행한 결과를 어떻게 돌려받을 것인가
+
+```
+#include <iostream>
+
+using namespace std;
+
+int getValue(int x)
+{
+	int value = x * 2;
+	return value;
+}
+
+int * getAddress(int x)
+{
+	int value = x * 2;
+	return &value;
+}
+
+int * allocateMemory(int size)
+{
+	return new int[size];
+}
+
+// return by reference
+int & getRef(int x)
+{
+	int value = x * 2;
+	return value;
+}
+
+int main()
+{
+	// 가장 간단하지만 복사가 많아 자칫 비효율적일 수 있다.
+	int value = getValue(3);
+
+	// 주소로 받기
+	// int * value = getAddress(3); 이렇게 받아도 되는데 권장하지 않음. 메모리 주소는 이미 사라졌기 때문
+	int value = *getAddress(3);	// 이렇게 받아와도 되는데 권장하지 않음
+						// 사라질 변수를 de-referenceing하는 것이기 때문 
+
+	// 아주 특이한 경우로 return by address하기도 함
+	int *array = new int[10];
+	
+	// 이런 식으로 메모리를 한 번에 할당받기도 함
+	int *array = allocateMemory(1024);
+	// 물론 이렇게 동적 메모리를 할당하면 allocateMemory 안에서 new로 할당한 메모리를
+	// 어딘가에서는 delete해 주어야 하는데
+	// 그걸 여기서 해 주어야 한다
+	delete[] array;	// delete 잊지말기
+
+
+	// return by reference (좀 더 자세히)
+	int value = getRef(5);
+	cout << value << endl;		// 10
+
+	// 여기서 return by reference에서 조심해야 할 점
+	// 만일 int &value = getRef(5);
+	// 이렇게 받아온다면 이미 getRef 안에서 사라져버린 value를 참조하는 셈이므로
+	// 위험할 수 있다.
+	// cout << value << endl;		// 10
+	// cout << value << endl;		// 261012448 (쓰레기값이 나온다)
+
+	return 0;
+}
+
+
+```
+
+return by reference가 편하게 사용되는 경우
+
+```
+#include <iostream>
+#include<array>
+
+using namespace std;
+
+int& get(std::array<int, 100>& my_array, int ix)
+{
+	return my_array[ix];		// 한 element의 reference 리턴해주기
+}
+
+int main()
+{
+	std::array<int, 100> my_array;		// 메모리 할
+	my_array[30] = 10;
+	cout << my_array[30] << endl;		//10
+
+	// my_array라는 배열을 별도의 함수가 고치게 할 수 있다
+	get(my_array, 30) = 1024;			// 마치 get(~)가 변수인 것 처럼 초기화
+	cout << my_array[30] << endl;		//1024
+
+	return 0;
+}
+
+
+```
+
+여러 개의 return 값 받아오기
+
+## 구조체 이용하기
+
+```
+#include <iostream>
+
+using namespace std;
+
+// 여러 개의 값을 리턴받고 싶을 땐 struct를 쓰곤 했다
+// struct, 즉 사용자 정의 자료형 선언
+struct S
+{
+	int a, b, c, d;
+};
+
+S getStruct()
+{
+	S my_s{ 1, 2, 3, 4 };
+};
+
+int main()
+{
+
+	// 이러면 my_s를 통해 a b c d 접근 가능
+	S my_s = getStruct();
+	// 옛날에는 이렇게 많이 썼는데 구현 오버헤드가 좀 큰 단점이 있다
+
+
+	return 0;
+}
+
+
+```
+
+
+두 번째 방법 : 튜플을 이용하는 방법
+
+
+```
+#include <iostream>
+#include <tuple>
+
+using namespace std;
+
+// 정수형과 double형 이렇게 두 개의 리턴을 받고 싶다면
+// std::tuple<int, double> 자체가 사용자 정의 자료형이 되는 것
+std::tuple<int, double> getTuple()
+{
+	int a = 10;
+	double d = 3.14;
+	return std::make_tuple(a, d);
+};
+
+int main()
+{
+	std::tuple<int, double> my_tp = getTuple();
+	cout << std::get<0>(my_tp) << endl;		//10
+	cout << std::get<1>(my_tp) << endl;		//3.14
+}
+
+```
+
+
+이것도 좀 귀찮다면
+
+C++17 버전으로
+
+```
+	std::tuple<int, double> my_tp = getTuple();
+	cout << std::get<0>(my_tp) << endl;		//10
+	cout << std::get<1>(my_tp) << endl;		//3.14
+
+```
+
+이 부분을 아래와 같이 바꿀 수 있다.
+
+```
+	auto[a, d] = getTuple();
+	cout << a << endl;		//10
+	cout << d << endl;		//3.14
+
+```

@@ -1,0 +1,111 @@
+디버깅을 할 때 컴파일러의 도움을 받는 법
+런타임 오류를 잡을 수 있는 방법 중 하나
+assert는 디버그모드일 때만 작동 한다
+
+```
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+int main()
+{
+	// release 모드일 때는 동작 안함
+	// Assertion failed: false, file c:\users\강민철\desktop\cpp\myfirsthelloworldsolution\myfirsthelloworld\myfirsthelloworld.cc, line 8
+	// 라고 뜨면서 런타임 에러를 띄운다
+	assert(false);
+
+	return 0;
+}
+
+```
+
+
+```
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+int main()
+{
+	int number = 5;
+
+	// ...
+
+	// 중간에 어떤 과정을 거쳤건 여기서는 num값이 5여야 한다
+	// 라는 뜻
+	assert(number == 5);
+
+	return 0;
+}
+
+```
+
+```
+#include <iostream>
+#include <cassert>
+#include <array>
+
+using namespace std;
+
+void printValue(const std::array<int, 5> &my_array, const int& ix)
+{
+	assert(ix >= 0);
+	assert(ix <= my_array.size() - 1);
+
+	cout << my_array[5] << endl;
+
+}
+
+int main()
+{
+	std::array<int, 5> my_array{ 1, 2, 3, 4, 5 };
+	printValue(my_array, 100);
+	// Assertion failed: ix <= my_array.size() - 1, file c:\users\강민철\desktop\cpp\myfirsthelloworldsolution\myfirsthelloworld\myfirsthelloworld.cc, line 10
+	// 런타임 에러가 나지만 적어도 어디에서 문제가 생겼는지 알 수 있게 된다
+
+	return 0;
+}
+
+```
+
+컴파일 타임에 오류를 잡아주는 static_assert도 있다
+
+```
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+int main()
+{
+	// 변수를 static assert로 잡으려면 const여야 함
+	const int x = 5;
+
+	// static assert에서는 두번째 인자로 메세지를 적을 수도 있다
+	static_assert(x == 5, "x should be 5");
+
+	return 0;
+}
+
+```
+
+
+
+```
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+int main()
+{
+	// 이렇게 바꾼 순간 바로 warning이 뜬다
+	const int x = 10;
+	static_assert(x == 5, "x should be 5");
+
+	return 0;
+}
+
+```

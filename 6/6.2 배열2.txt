@@ -1,0 +1,172 @@
+## 이 강의 포인터, 배열 관련 중요한 내용 다룸. 시간 되면 다시 듣기
+
+array의 주소
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{	
+
+	const int num_students = 20;
+	int students_scores[num_students];
+
+	cout << &students_scores << endl;
+	cout << &students_scores[0] << endl;
+	cout << &students_scores[1] << endl;
+	cout << &students_scores[2] << endl;
+	cout << &students_scores[3] << endl;
+	cout << &students_scores[4] << endl;
+	/*
+	000000C61BBCFBD0
+	000000C61BBCFBD0
+	000000C61BBCFBD4
+	000000C61BBCFBD8
+	000000C61BBCFBDC
+	000000C61BBCFBE0
+	*/
+	cout << (int)&students_scores << endl;
+	cout << (int)&students_scores[0] << endl;
+	cout << (int)&students_scores[1] << endl;
+	cout << (int)&students_scores[2] << endl;
+	cout << (int)&students_scores[3] << endl;
+	cout << (int)&students_scores[4] << endl;
+	/*
+	1337260832
+	1337260832
+	1337260836
+	1337260840
+	1337260844
+	1337260848
+	*/
+
+
+	return 0;
+}
+```
+
+
+함수의 파라미터로 배열 주소 넘기기
+
+함수의 파라미터로 배열을 넘겨줄 수 있다.
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int students_scores[20])
+{
+	cout << students_scores[0] << endl;
+	cout << students_scores[1] << endl;
+	cout << students_scores[2] << endl;
+
+}
+
+int main()
+{	
+
+	const int num_students = 20;
+	int students_scores[num_students] = { 1,2,3,4,5 };
+
+	cout << students_scores[0] << endl;		// 1
+	cout << students_scores[1] << endl;		// 2
+	cout << students_scores[2] << endl;		// 3
+
+	doSomething(students_scores);	
+	/*
+	1
+	2
+	3
+	*/
+
+	return 0;
+}
+```
+
+그럼 이번에는 함수 파라미터로 넘겨줄 때의 배열 주소와
+배열을 받은 주소를 비교해보자 
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int students_scores[20])
+{
+	cout << (int)&students_scores  << endl;
+
+}
+
+int main()
+{	
+
+	const int num_students = 20;
+	int students_scores[num_students] = { 1,2,3,4,5 };
+
+	cout << (int)&students_scores << endl;		// 여기와
+
+	doSomething(students_scores);			// 여기가 주소가 다르다!
+
+	return 0;
+}
+```
+
+그 이유는 배열은 이름 자체가 주소이기 때문이다.
+(이 부분 강의 다시듣기)
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int students_scores[20])
+{
+	// students_score 자체가 넘겨준 인자의 포인터변수이기 때문에 다른 주소를 가리킨다
+	cout << (int)&students_scores << endl;
+
+	cout << (int)&students_scores[0] << endl;	// 하지만 이렇게 포인터 변수의 값을 출력하면 동일한 값이 출력된다
+
+}
+
+int main()
+{
+
+	const int num_students = 20;
+	int students_scores[num_students] = { 1,2,3,4,5 };
+
+	cout << (int)students_scores << endl;	// 이름만 써도 주소를 가지고 올 수 있다
+	cout << (int)&students_scores << endl;	// 위와 동일한 결과를 출력한다
+
+
+	doSomething(students_scores);		
+
+	return 0;
+}
+```
+
+```
+#include <iostream>
+
+using namespace std;
+
+void doSomething(int students_scores[20])
+{
+	cout << "size in doSomething" << sizeof(students_scores) << endl;	// 4 포인터의 크기
+															// x86으로 하면 포인터 크기가 8이니까 8이 찍힘
+}	
+
+int main()
+{
+
+	const int num_students = 20;
+	int students_scores[num_students] = { 1,2,3,4,5 };
+
+	doSomething(students_scores);		
+	cout << "size in main" << sizeof(students_scores) << endl;	// 80
+
+	return 0;
+}
+```

@@ -1,0 +1,89 @@
+여기 강의 뭔가 내용이 부족하기도 하고 내용 이해도 잘 안감. 따로 구글링으로 알아보기 	
+
+```
+#include <iostream>
+
+using namespace std;
+
+// int argc는 갯수, char *argv[]는 내용
+int main(int argc, char *argv[])
+{
+	for (int count = 0; count < argc; ++count)
+	{
+		// 실행파일의 위치가 나온다!
+		// C:\Users\강민철\Desktop\cpp\MyFirstHelloWorldSolution\Debug\MyFirstHelloWorld.exe
+		cout << argv[count] << endl;
+	}
+
+	return 0;
+}
+
+```
+
+실제로 C:\Users\강민철\Desktop\cpp\MyFirstHelloWorldSolution\Debug\MyFirstHelloWorld.exe
+를 실행해보면 실행이 된다.
+
+실행파일이 있는 위치에서
+
+```
+> MyFirstHelloWorld.exe
+MyFirstHelloWorld.exe
+```
+
+```
+> MyFirstHelloWorld.exe hello
+MyFirstHelloWorld.exe
+hello
+```
+
+```
+> MyFirstHelloWorld.exe hello 1 2 3
+MyFirstHelloWorld.exe
+hello
+1
+2
+3
+```
+
+받아온 인자가 string으로 처리되는지 확인해보자
+
+```
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+	for (int count = 0; count < argc; ++count)
+	{
+		std::string argv_single = argv[count];
+
+		if (count == 1)	
+		{
+			// stoi : 정수로 바꿔줌
+			int input_number = std::stoi(argv_single);
+			// 정수로 바뀌었음을 확인하기 위해 1을 더해보자
+			cout << input_number + 1 << endl;
+		}
+		else
+			cout << argv_single << endl;
+	}
+
+	return 0;
+}
+
+```
+
+```
+> MyFirstHelloWorld.exe 1
+MyFirstHelloWorld.exe
+2
+```
+
+
+여기서 꿀팁
+
+command line argument을 쉽게 만들게 해 주는 boost라는 라이브러리 중 준표준 라이브러리가 있다
+
+https://www.boost.org/doc/libs/1_63_0/doc/html/program_options.html

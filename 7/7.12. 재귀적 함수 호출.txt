@@ -1,0 +1,58 @@
+디버깅해가면서 재귀함수 관찰해보자
+
+```
+#include <iostream>
+
+using namespace std;
+
+void countDown(int count)
+{
+	cout << count << endl;
+	if(cout > 0)	// 종료 조건 명시
+		countDown(count - 1);	
+}
+
+int main()
+{
+
+	countDown(5);
+
+	return 0;
+}
+```
+
+참고로 recursion을 많이 하면 스택 오버플로우가 생길 수 있다
+
+```
+#include <iostream>
+
+using namespace std;
+
+// 이것도 디버거로 찍어보자
+int sumTo(int sumto)
+{
+	if (sumto <= 0)
+		return 0;
+	else if (sumto < 1)
+		return 1;
+	else
+		return sumTo(sumto - 1) + sumto;
+}
+
+int main()
+{
+	cout << sumTo(10) << endl;
+
+	return 0;
+}
+
+```
+
+
+recursion (재귀) vs iteration (반복)
+
+재귀가 더 구현이 쉽기는 함
+근데 재귀는 스택을 사용하기 때문에
+호출 depth가 기기마다 다르고 한계가 있다
+퍼포먼스가 중요한 곳에서는 사용 자제할 것
+

@@ -1,0 +1,105 @@
+배열을 iteration할 때 for를 이용하면 좀 귀찮음
+그럴 때 사용하는게 for each
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	int fibonacci[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
+
+	// 원래대로라면
+	// for(int i=0; i< ... ++i )
+
+	//for each를 쓴다면 아래와 같이 쓸 수 있음
+	for (int number : fibonacci)
+		cout << number << " ";
+	cout << endl;
+
+	// 배열 안의 값을 바꿀 수도 있을까?
+	for (int number : fibonacci)
+		number = 10;
+
+	for (int number : fibonacci)
+		cout << number << " ";
+	cout << endl;
+	
+	// 바뀌지 않는다
+	// 배열을 순회하면서 배열 안의 값으 바꾸기 위해서는 레퍼런스로 값을 넣어야 한다
+	for (int& number : fibonacci)
+		number = 10;
+
+	for (int number : fibonacci)
+		cout << number << " ";		// 그럼 이제 배열 안의 값이 잘 바뀐다
+	cout << endl;
+
+	// auto를 넣는 방법도 있다
+	for (auto &number : fibonacci)
+		number = 11;
+
+	for (int number : fibonacci)
+		cout << number << " ";		// 그럼 이제 배열 안의 값이 잘 바뀐다
+	cout << endl;
+
+
+	return 0;
+}
+
+```
+
+최대값 찾기
+
+```
+#include <iostream>
+#include <limits>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int fibonacci[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
+
+	int max_number = numeric_limits<int>::lowest();
+
+	for (const auto &n : fibonacci)
+		max_number = std::max(max_number, n);
+
+	cout << max_number << endl;
+	
+	return 0;
+}
+```
+
+배열을 동적할당하면 for each를 사용할 수 없다
+단점이라고 생각할 수는 있지만, 그렇지도 않은게, 
+배열 대신 vector를 사용 가능하다
+
+vector는 동적할당을 편하게 할 수 있게 하는 std 내의 라이브러리
+
+```
+#include <iostream>
+#include <limits>
+#include <algorithm>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+	// int fibonacci[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
+	vector<int> fibonacci = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 };
+
+	int max_number = numeric_limits<int>::lowest();
+
+	for (const auto &n : fibonacci)
+		max_number = std::max(max_number, n);
+
+	cout << max_number << endl;
+	
+	return 0;
+}
+
+```

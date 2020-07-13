@@ -1,0 +1,40 @@
+if문 안에서 선언된 변수의 scope와 duration은 if문을 벗어나면 끝나게 된다
+
+```
+#include <iostream>
+
+using namespace std;
+
+int main() 
+{
+	int x = 100; 
+
+	if (1)
+		int x = 5;	// 지역변수니까 if문 빠져나가면 사라짐
+	else
+		int x = 6;	// 지역변수니까 else 빠져나가면 사라짐
+
+	cout << x << endl;		// 100
+
+
+	return 0;
+}	
+```
+
+
+```
+int min(int x, int y)
+{
+	return (x>y) ? y : x;
+
+}
+```
+
+null statement
+
+```
+if (x > 10) 
+    ;
+```
+
+근데 `if();` 여기에 `;` 안치도록 조심하기

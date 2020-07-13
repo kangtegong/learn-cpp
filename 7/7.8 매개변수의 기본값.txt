@@ -1,0 +1,102 @@
+
+```
+#include <iostream>
+using namespace std;
+
+void print(int x = 0)	// default parameter
+{
+	cout << x << endl;
+}
+
+int main()
+{
+	print(10);		// 10
+	print();		// 0
+	return 0;
+}
+```
+
+여러 개의 파라미터가 기본값을 가지는 경우
+
+여기서 웃기는 개 오른쪽이 기본값이 있는데 왼쪽에 없는 건 괜찮은데 (`void print(int x, int y, int z = 30)`)
+
+오른쪽에 없는데 왼쪽에 없는건 에러남 (`void print(int x = 0, int y = 20, z = 30)` 에러)
+
+```
+#include <iostream>
+using namespace std;
+
+void print(int x=10, int y=20, int z = 30)
+{
+	cout << x << " " << y << " " << z << endl;
+}
+
+int main()
+{
+	print();				// 10 20 30
+	print(100);				// 100 20 30 
+	print(100, 200);		// 100 200 30
+	print(100, 200, 300);	// 100 200 300 
+
+	return 0;
+}
+
+```	
+
+주의할 점
+
+정의와 선언을 분리할 경우
+둘 중 하나만 사용할 수 있음
+기본값 서정을 한 군데에서만 할 수 있음
+
+정의부에서 기본값을 써 줬으면 선언부에서는 쓰면 안되고
+선언부에서 기본값을 써 줬으면 정의부에서는 쓰면 안된다.
+
+근데 보통 헤더파일의 declaration에 써 준다.
+
+```
+void print(int x = 10, int y = 20, int z = 30);
+
+void print(int x, int y, int z)
+{
+	///
+}
+```
+
+함수의 오버로딩과 디폴트값
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+void print(std::string str){}
+void print(char ch = ' '){}
+
+int main()
+{
+	print();		// 이 경우 default가 있는 print() 실행
+
+	return 0;
+}
+```
+
+
+근데 여기서 이런 경우 ambiguous call이라는 에러가 뜬다
+결론: 디폴트값이 오버로딩에도 영향을 줄 수 있다.
+
+```
+#include <iostream>
+#include <string>
+using namespace std;
+
+void print(int x){}		// ambiguous
+void print(int x, int y = 10){}	// 디폴트값 없애버리면 에러 사라짐
+
+int main()
+{
+	print(10);	// 어디에 매칭될 지 모름
+
+	return 0;
+}
+```

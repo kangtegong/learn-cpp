@@ -1,0 +1,157 @@
+정리, 재활용, 연관관계를 잘 파악하자
+
+```
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Date
+{
+	int m_month;
+	int m_day;
+	int m_year;
+};
+
+int main(int argc, char *argv[])
+{
+	Date today;
+	// 이렇게 하면 에러가 난다.
+	// main 영역에서 Date Class의 멤버에 접근했기 때문
+	// Date가 "이 변수는 내 꺼니까 건드리지 마" 라고 하는 셈
+	today.m_month = 8;
+	today.m_day = 4;
+	today.m_year = 2025;
+
+	return 0;
+}
+
+```
+
+때문에 클래스 멤버들을 밖에서 접근할 수 있도록 access specifier를 지정해주면 된다.
+접근지정자를 따로 지정해주지 않으면 디폴트가 private이다.
+
+
+```
+class Date
+{
+public:
+	int m_month;
+	int m_day;
+	int m_year;
+
+```
+
+
+접근 지정자
+
+- public : 밖에서 접근 가능
+- private : 밖에서 접근 불가. 값을 바꾸려면 특별한 access function을 만들어 주어야 함
+- protected 
+
+
+access function "이 클래스 변수를 바꾸려면 나를 통해 바꿔라" 하는 변수
+
+
+```
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Date
+{
+private:
+	int m_month;
+	int m_day;
+	int m_year;
+
+// setDate는 public, 멤버변수는 private!
+public:
+	void setDate(const int& month_input, const int& day_input, const int& year_input)
+	{
+		m_month = month_input;
+		m_day = day_input;
+		m_year = year_input;
+	}
+
+	// const int& getDay() 로 getter함수를 설계하는 게 국룰
+	int getDay()
+	{
+		return m_day;
+	}
+
+};
+
+int main(int argc, char *argv[])
+{
+	Date today;
+	today.setDate(8, 4, 2025);
+	cout << today.getDay() << endl;
+
+	return 0;
+}
+
+```
+
+여기서 또 재미있는 개념
+
+클래스의 메서드는 자기 자신을 인자로 받을 수 있다.
+
+
+```
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Date
+{
+private:
+	int m_month;
+	int m_day;
+	int m_year;
+
+// setDate는 public, 멤버변수는 private!
+public:
+	void setDate(const int& month_input, const int& day_input, const int& year_input)
+	{
+		m_month = month_input;
+		m_day = day_input;
+		m_year = year_input;
+	}
+
+	// const int& getDay() 로 getter함수를 설계하는 게 국룰
+	int getDay()
+	{
+		return m_day;
+	}
+
+	// 다른 인스턴스여도 같은 클래스에서부터 나온 멤버라면 
+	// 다른 인스턴스의 멤버(original.m_month, m_day, m_year)에 접근 가능하다
+	void copyFrom(const Date& original)
+	{
+		m_month = original.m_month;
+		m_day = original.m_day;
+		m_year = original.m_year;
+	}
+
+};
+
+int main(int argc, char *argv[])
+{
+	Date today;
+	today.setDate(8, 4, 2025);
+	cout << today.getDay() << endl;
+
+	Date copy;
+	copy.copyFrom(today);
+
+	return 0;
+}
+
+```
+

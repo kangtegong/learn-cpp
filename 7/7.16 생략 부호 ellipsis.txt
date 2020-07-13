@@ -1,0 +1,46 @@
+함수를 여러개 구현하다보면 매개변수 갯수가 정해져있지 않았으면 좋겠다
+내가 원하는 만큼 넣었으면 좋겠다
+하는 유혹이 생길 수 있는데, 이 때 쓸 수 있는데 생략부호 ellipsis
+
+원하는 만큼 파라미터를 받아올 수 있지만 자료형은 일치시켜 주어야 함
+
+단, ...는 사용이 위험할 수 있으니 조심해서 사용하길 권장
+
+```
+#include <iostream>
+#include <cstdarg> // for ellipsis
+
+using namespace std;
+
+// int count : 파라미터로 들어올 argument의 개수
+// count 개수만큼의 수의 평균 구하기
+double findAverage(int count, ...)
+{
+	double sum = 0;
+
+	va_list list;
+	
+	va_start(list, count);
+
+	// va_arg 실제로 값을 읽어오기
+	for (int arg = 0; arg < count; ++arg)
+	{
+		sum += va_arg(list, int);
+	}
+	va_end(list);
+
+	return sum / count;
+
+}
+
+int main(int argc, char *argv[])
+{
+	// 첫번째 인자는 count, 두번째 이후부터는 ..
+	cout << findAverage(1, 1, 2, 3, "hello", "c") << endl;		// 1
+	cout << findAverage(3, 1, 2, 3) << endl;				// 2
+	cout << findAverage(5, 1, 2, 3, 4, 5) << endl;			// 3
+	cout << findAverage(10, 1, 2, 3, 4, 5) << endl;			// 오류
+	return 0;
+}
+
+```

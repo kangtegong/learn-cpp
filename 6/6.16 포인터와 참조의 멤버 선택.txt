@@ -1,0 +1,44 @@
+포인터와 참조를 struct나 class에 대해 사용할 땐
+포인터가 참조를 통해 구조체나 class에 멤버에 접근할 수 있다
+
+```
+#include <iostream>
+
+using namespace std;
+
+struct Person
+{
+	int age;
+	double weight;
+};
+
+int main()
+{
+	
+	Person person;
+	person.age;	// 일반적으로 멤버에 접근하는 방식
+	person.age = 10;
+	person.weight = 30;
+
+	// 레퍼런스를 사용하는 방법
+	Person &ref = person;
+	ref.age = 15;
+
+	// 포인터를 사용하는 방법 -> 를 사용한다
+	Person *ptr = &person;
+	ptr->age = 30;
+	// 이 때 de referencing 연산자와 함께 쓸 수 있음
+	(*ptr).age = 20;
+
+	Person &ref2 = *ptr;
+	ref2.age = 45;
+
+	// 아래 동일하게 주소가 나옴
+	cout << &person << endl;
+	cout << &ref2 << endl;
+
+
+	return 0;
+}
+
+```

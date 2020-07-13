@@ -1,0 +1,274 @@
+-- 여기 코드 직접 테스트해보기 --
+
+전역변수 global variable
+정적변수 static variable
+내부연결 internal linkage
+외부연결 external linkage
+
+---
+
+컴파일 후 obj 파일을 연결해준다 = linking한다
+
+지역변수 (블럭 안에 있는 경우) 	: linkage가 없다
+파일 안에서 어디든지 사용할 수 있다 : internal linkage
+다른 파일에서도 사용할 수 있다 	: external linkage
+
+---
+
+```
+#include<iostream>
+
+using namespace std;
+
+// main 함수 밖에 선언 = 전역
+int value = 123; // 이 경우 아래 지역변수의 값을 가리게됨
+
+int main() 
+{
+	
+	cout << value << endl;
+	// local variable
+	int value = 1;
+
+	cout << value << endl;
+	
+	// 블럭 안에서 전역변수 사용하기
+	cout << ::value << endl;	// 전역변수로서의 value
+	
+	return 0;
+}
+```
+
+
+
+```
+#include<iostream>
+
+using namespace std;
+
+void doSomething()
+{
+	// a가 할당받은 메모리는 함수가 끝나면 사라지고 함수가 호출되면 다시 할당
+	int a = 1;	
+	++a;
+	cout << a << endl;
+}
+
+void doSomething2()
+{
+	// static = 뭐가 static이야? >> 이 변수가 os로부터 받은 메모리가 static이다. 한 번 초기화해서 같은 메모리를 재사용한다.
+	// 그리고 초기화를 한 번만 한다.
+	// 참고로 굳이 b를 전역으로 설정할 필요는 X 그럼 낭비임.
+	static int b = 1; // 그리고, 그렇기 때문에 static 변수를 선언할거면 반드시 초기화해줘야 함
+	// static int b; 이렇게 하면 안된다.
+	++b;
+	cout << b << endl;
+}
+
+int main() 
+{
+	doSomething();		// 2
+	doSomething();		// 2
+
+	doSomething2();		// 2
+	doSomething2();		// 3
+	doSomething2();		// 4
+
+	return 0;
+}
+```
+
+전역변수는 많이 쓰지 말자
+굳이 쓸거면 이름으로라도 구분하자 global_a 이렇게
+
+---
+
+로컬 variable에 대해서 링킹 단계에서 링커가 알 필요가 있을까?
+딱히 없다.
+즉, 로컬 variable은 linkage가 없다
+
+---
+
+internal linkage
+
+개별 cpp 파일 안에서만 전역으로 작동하는 전역변수를 의미
+e.g.) 전역변수
+
++ 전역변수 앞에 static을 써 두면 다른 cpp 파일에서 접근이 불가능하다
+
+```
+using int global_a = 1; // 다른 파일에서 접근 불가능한 전역변수
+int global_a = 1;	// 전역 변수
+
+```
+
+
+---
+
+다른 파일의 함수 or 변수 가지고 오기
+
+1. 함수 갖고오기
+
+다른 파일(test.cpp)에 정의된 void doSomething() 이라는 함수를
+main.cpp 에서 사용하고자 할 때
+
+main.cpp에서 
+
+```
+// forward declaration
+void doSomething();
+```
+
+이렇게 다른 파일에 있는 함수의 반환값, 함수이름, 인자를 미리 적곤 한다.
+근데 이 forward declation은 사실 extern이 생략된 것이다.
+
+```
+extern void doSomething()
+```
+
+"어딘가에 doSomething이라는 함수가 존재한다" 라는 뜻이다
+
+
+
+변수도 마찬가지. "어딘가에 int a라는 변수가 있다" 라는 뜻
+
+main.cpp 안에 
+
+```
+extern int a;
+```
+
+라고 적어둔다면
+test.cpp 안의 
+
+```extern int a=123;``` 
+
+라고 선언한 변수를 사용가능하다.
+
+
+여기서 주의. extern으로 선언한 변수의 이름은 프로그램 전체에서 유일해야 한다.
+
+
+main.cpp 에서 `extern int a =123;`
+
+test.cpp에서 `extern int a = 456;`
+
+이라고 선언하면 에러가 난다.
+
+
+---
+
+같은 헤더파일의 namespace를 사용한다면 주소도 같을까?
+
+MyConstants.h/
+```
+namespace Constants
+{
+	const double pi(3.14);
+	const double graity(9.8);
+}
+```
+
+main.cpp/
+```
+#inclulde <iostream>
+#include <MyConstants.h"
+
+using namespace std;
+void doSomething();
+
+int main()
+{
+	cout << Constants::pi << endl;	//3.14
+	doSomething();			// 3.14
+	return 0;
+}
+```
+
+test.cpp/
+```
+#inclulde <iostream>
+#include <MyConstants.h"
+
+void doSomething()
+{
+	using namespace std;
+	cout << Constants::pi << endl;	// 3.14
+} 
+```
+
+근데 test.cpp에서 출력하는 Constants::pi의 주소,
+main.cpp에서 출력하는 Constants::pi를 비교해보자
+
+main.cpp/
+```
+#inclulde <iostream>
+#include <MyConstants.h"
+
+using namespace std;
+void doSomething();
+
+int main()
+{
+	cout << Constants::pi << " " << &Constants::pi << endl;	//3.14
+	doSomething();			// 3.14
+	return 0;
+}
+```
+
+test.cpp/
+```
+#inclulde <iostream>
+#include <MyConstants.h"
+
+void doSomething()
+{
+	using namespace std;
+	cout << Constants::pi << " " << &Constants::pi << endl;	//3.14
+} 
+```
+
+그럼 놀랍게도 주소가 다르게 찍힌다. 이게 커지면 메모리 낭비가 커질 수 있다.
+
+동일한 주소를 사용해주기 위해서는?
+MyConstants.h에서는 선언만 해주 주고
+새로운 cpp 파일을 하나 더 만들어서 그 안에서 초기화해준다.
+
+MyConstants.h/
+```
+namespace Constants
+{
+	const double pi;
+	const double graity;
+}
+```
+
+
+MyConstants.cpp/
+```
+namespace Constants
+{
+	extern const double pi(3.14);
+	extern const double graity(9.8);
+}
+```
+
+
+---
+
+정리
+
+int g_x; 		// external linkage. 초기화 안된 전역변수
+static int g_x;	// internal linkage. 다른곳에서 접근 X인 정적변수
+const int g_x;	// 이렇게 쓰면 안됨. 초기화해주어야 함
+
+// forward declaration의 경우
+extern int g_z;
+extern const int g_z;	// 다른 어느 한 군데에서 int g_z를 초기화해주었어야함
+
+int g_y(1);
+static int g_y(1);	// 다른 파일에서 접근 불가능
+const int g_y(1);	
+
+extern int g_w(1);		// 다른 곳에서는 초기화하면 안됨. 초기화, 전역변수, 다른 곳에서 접근 가능.
+extern const int g_w(1);	// 외부에서 접근가능한 함수

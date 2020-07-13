@@ -1,0 +1,26 @@
+매개변수 parameter
+인자 argument
+
+```
+#include <iostream>
+
+using namespace std;
+
+int foo(int x, int y);	// x, y == parameter
+
+int foo(int x, int y)
+{
+	// x, y는 마치 지역변수처럼 블럭 안에서만 사용됨
+	return x + y;
+}	// x and y are destroyed here
+
+int main()
+{
+	int x = 1, y = 2;
+	foo(6, 7);		// 6, 7 : arguments (actual parameters)
+	foo(x, y + 1);
+
+	return 0;
+}
+
+```

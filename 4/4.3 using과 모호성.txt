@@ -1,0 +1,25 @@
+동일한 이름의 함수나 변수를 여러번 써야하는 경우
+
+컴파일러는 뭐를 써야 하는지에 대한 불만(모호성, ambiguity)을 말하게 되는데
+그 때 이걸 쓰라고 명시하는것이 using문이다.
+
+```
+using namespace std;
+cout << "Hello" << endl;
+```
+
+```
+using std::cout;
+cout << "Hello" << std::endl;
+```
+
+
+
+using namespace의 위험성(?)
+
+헤더파일같이 범위가 넓은 (전역범위) 파일에서 
+using namespace 를 쓴다면
+
+그 헤더를 include하는 모든 cpp파일에서 영향을 받는다
+
+가급적 cpp에서 쓰자 (가급적 적은 범위에서 영향을 주자)
